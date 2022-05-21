@@ -1,6 +1,43 @@
 {
-  "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true
-  }
+    "target": "es2020",
+    "lib": [
+      "es6",
+      "dom",
+      "esnext"
+    ],
+    "jsx": "react-jsx",
+    "module": "es2020",
+    "moduleResolution": "node",
+    "isolatedModules": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "experimentalDecorators": true,
+    "baseUrl": "./",
+    "allowSyntheticDefaultImports": true,
+    "noErrorTruncation": true,
+    "noImplicitAny": true,
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "outDir": "./dist/",
+    "paths": {
+      "/*": [
+        "./src/*"
+      ]
+    },
+    "skipLibCheck": true
+  },
+  "typeRoots": ["./types"],
+  "include": [
+    "components",
+    "constants",
+    "hooks",
+    "navigation",
+    "screens"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "extends": "expo/tsconfig.base"
 }

@@ -15,9 +15,9 @@ const linking: LinkingOptions<RootStackParamList> = {
     screens: {
       Root: {
         screens: {
-          TabOne: {
+          DailyReport: {
             screens: {
-              TabOneScreen: 'one',
+              DailyReportScreen: 'dailyReport',
             },
           },
           TabTwo: {
@@ -27,7 +27,7 @@ const linking: LinkingOptions<RootStackParamList> = {
           },
         },
       },
-      Modal: 'modal',
+      AddDailyReport: 'addDailyReport',
       NotFound: '*',
     },
   },

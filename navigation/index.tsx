@@ -1,107 +1,103 @@
-/**
- * If you are not familiar with React Navigation, refer to the "Fundamentals" guide:
- * https://reactnavigation.org/docs/getting-started
- *
- */
-import { FontAwesome } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
+import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ColorSchemeName, Pressable } from 'react-native';
-
+import { Dimensions } from 'react-native';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider, Icon, IconRegistry } from '@ui-kitten/components';
 import Colors from '../constants/Colors';
-import useColorScheme from '../hooks/useColorScheme';
-import ModalScreen from '../screens/ModalScreen';
+import AddDailyReportScreen from '../screens/daily-report-screen/AddDailyReportScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
-import TabOneScreen from '../screens/TabOneScreen';
-import TabTwoScreen from '../screens/TabTwoScreen';
+import DailyReportScreen from '../screens/daily-report-screen/DailyReportScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
+import { CoreContextProvider } from '../core/CoreContext';
+import RequestFactory from "../core/request-factory";
+import RequestConfigList from "../core/RequestConfigList";
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
+import { default as theme } from '../core/custom-theme.json';
+import HeaderRight from "../screens/daily-report-screen/HeaderRight";
+import ExpensesListScreen from "../screens/ExpensesListScreen";
 
-export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
+const MyTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: '#fff',
+    primary: Colors.light.tint
+  },
+};
+
+export default function Navigation() {
   return (
-    <NavigationContainer
-      linking={LinkingConfiguration}
-      theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <RootNavigator />
+    <NavigationContainer linking={LinkingConfiguration} theme={MyTheme}>
+      <RootNavigator/>
     </NavigationContainer>
   );
 }
 
-/**
- * A root stack navigator is often used for displaying modals on top of all other content.
- * https://reactnavigation.org/docs/modal
- */
 const Stack = createNativeStackNavigator<RootStackParamList>();
+
+const requestFactory = new RequestFactory({ requestConfigList: RequestConfigList });
+const createRequest = requestFactory.createRequest.bind(requestFactory);
+
+const { height } = Dimensions.get('window');
+const modalHeight = height - 210;
 
 function RootNavigator() {
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
-      <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
-      <Stack.Group screenOptions={{ presentation: 'modal' }}>
-        <Stack.Screen name="Modal" component={ModalScreen} />
-      </Stack.Group>
-    </Stack.Navigator>
+    <CoreContextProvider value={{ createRequest, modalHeight }}>
+      <IconRegistry icons={EvaIconsPack}/>
+      <ApplicationProvider {...eva} theme={{ ...eva.light, ...theme }}>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Root"
+            component={BottomTabNavigator}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Что-то пошло не так' }}/>
+          <Stack.Group screenOptions={{ presentation: 'modal' }}>
+            <Stack.Screen
+              name="AddDailyReport"
+              component={AddDailyReportScreen}
+              options={{ title: 'Добавление нового отчета' }}
+            />
+            <Stack.Screen
+              name="ExpensesList"
+              component={ExpensesListScreen}
+              options={{ title: 'Расходы за текущий день' }}
+            />
+          </Stack.Group>
+        </Stack.Navigator>
+      </ApplicationProvider>
+    </CoreContextProvider>
   );
 }
 
-/**
- * A bottom tab navigator displays tab buttons on the bottom of the display to switch screens.
- * https://reactnavigation.org/docs/bottom-tab-navigator
- */
 const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
 function BottomTabNavigator() {
-  const colorScheme = useColorScheme();
-
   return (
     <BottomTab.Navigator
-      initialRouteName="TabOne"
+      initialRouteName="DailyReport"
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme].tint,
-      }}>
+        tabBarActiveTintColor: Colors.light.tint
+      }}
+    >
       <BottomTab.Screen
-        name="TabOne"
-        component={TabOneScreen}
-        options={({ navigation }: RootTabScreenProps<'TabOne'>) => ({
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Pressable
-              onPress={() => navigation.navigate('Modal')}
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.5 : 1,
-              })}>
-              <FontAwesome
-                name="info-circle"
-                size={25}
-                color={Colors[colorScheme].text}
-                style={{ marginRight: 15 }}
-              />
-            </Pressable>
-          ),
+        name="DailyReport"
+        component={DailyReportScreen}
+        options={({ navigation }: RootTabScreenProps<'DailyReport'>) => ({
+          title: 'Отчеты',
+          tabBarIcon: ({ color }) => <Icon
+            name="file-text"
+            style={{ width: 32, height: 32, marginRight: 16 }}
+            fill={color}
+          />,
+          tabBarShowLabel: false,
+          headerRight: () => <HeaderRight navigation={navigation} />
         })}
-      />
-      <BottomTab.Screen
-        name="TabTwo"
-        component={TabTwoScreen}
-        options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-        }}
       />
     </BottomTab.Navigator>
   );
-}
-
-/**
- * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
- */
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>['name'];
-  color: string;
-}) {
-  return <FontAwesome size={30} style={{ marginBottom: -3 }} {...props} />;
 }

@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "components/**/*.tsx",
+    "constants/*.ts",
+    "navigation/**/*.tsx",
+    "navigation/**/*.ts",
+    "screens/**/*.tsx",
+    "core/*.ts",
+    ".eslintrc.js"
+  ]
+}

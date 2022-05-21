@@ -3,6 +3,7 @@
     "name": "hash-react-native",
     "slug": "hash-react-native",
     "version": "1.0.0",
+    "owner": "ovik",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
@@ -19,13 +20,15 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ovik.hashreactnative"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+        "foregroundImage": "./assets/images/icon.png",
+        "backgroundColor": "#f4eddb"
+      },
+      "package": "com.ovik.hashreactnative"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"

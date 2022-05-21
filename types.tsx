@@ -1,11 +1,10 @@
-/**
- * Learn more about using TypeScript with React Navigation:
- * https://reactnavigation.org/docs/typescript/
- */
+// @ts-ignore
+// @ts-ignore
 
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import RequestFactory from "./core/request-factory";
 
 declare global {
   namespace ReactNavigation {
@@ -15,7 +14,8 @@ declare global {
 
 export type RootStackParamList = {
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
-  Modal: undefined;
+  AddDailyReport: undefined;
+  ExpensesList: undefined;
   NotFound: undefined;
 };
 
@@ -25,7 +25,8 @@ export type RootStackScreenProps<Screen extends keyof RootStackParamList> = Nati
 >;
 
 export type RootTabParamList = {
-  TabOne: undefined;
+  DailyReport: undefined;
+  addDailyReport: undefined;
   TabTwo: undefined;
 };
 
@@ -33,3 +34,24 @@ export type RootTabScreenProps<Screen extends keyof RootTabParamList> = Composit
   BottomTabScreenProps<RootTabParamList, Screen>,
   NativeStackScreenProps<RootStackParamList>
 >;
+
+export interface IMainAppOptions {
+  createRequest: RequestFactory['createRequest'];
+  modalHeight: number
+  locale?: Record<string, any>
+}
+
+export interface IMessage {
+  type: 'ERROR' | 'WARNING' | 'INFO' | 'SUCCESS';
+  context: 'GLOBAL' | 'MODEL' | 'FIELD';
+  path?: string;
+  value?: string;
+  code?: string;
+}
+
+export interface IResponseData<T> {
+  status: string;
+  data?: T,
+  messages?: Array<IMessage>;
+  fieldMessages?: Record<string, Array<IMessage>>;
+}

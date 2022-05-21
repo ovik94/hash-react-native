@@ -1,13 +1,13 @@
 import React, { createRef, useContext, useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
-import { CoreContext } from "../../core/CoreContext";
-import { Button, Icon, IconProps, Layout, Spinner, Text } from "@ui-kitten/components";
-import SwipeList from "../../components/swipe-list/SwipeList";
-import { IExpense } from "../../components/add-expense/AddExpense";
-import { formatAmountString } from "../../components/utils/formatAmountString";
-import SwipeListItem from "../../components/swipe-list-item/SwipeListItem";
-import ActionSheet from "react-native-actions-sheet";
-import ReportDetail from "../../components/report-detail/ReportDetail";
+import ActionSheet from 'react-native-actions-sheet';
+import { Button, Icon, IconProps, Layout, Spinner, Text } from '@ui-kitten/components';
+import { IExpense } from '../../components/add-expense/AddExpense';
+import ReportDetail from '../../components/report-detail/ReportDetail';
+import SwipeListItem from '../../components/swipe-list-item/SwipeListItem';
+import SwipeList from '../../components/swipe-list/SwipeList';
+import { formatAmountString } from '../../components/utils/formatAmountString';
+import { CoreContext } from '../../core/CoreContext';
 
 export interface IDailyReport {
   id: string;
@@ -22,10 +22,34 @@ export interface IDailyReport {
 }
 
 const ReloadIcon = (props: IconProps) => (
-  <Icon {...props} name='sync'/>
+  <Icon {...props} name="sync" />
 );
 
-export default function DailyReportScreen({ navigation } : any) {
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 12
+  },
+  loading: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  swipeListIcon: {
+    width: 24,
+    height: 24,
+    tintColor: '#fff',
+    marginHorizontal: 8
+  },
+  reloadButton: {
+    marginTop: 32
+  },
+  sheet: {
+    padding: 16
+  }
+});
+
+export default function DailyReportScreen({ navigation }: any) {
   const { createRequest } = useContext(CoreContext);
   const [reports, setReports] = useState<Array<IDailyReport> | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -34,20 +58,18 @@ export default function DailyReportScreen({ navigation } : any) {
 
   const actionSheetRef = createRef<ActionSheet>();
 
-  const fetchReports = () => {
-    return createRequest<Array<IDailyReport>>('fetchReports')
-      .then(({ data, status }) => {
-        if (status === 'OK' && data) {
-          setReports(data.reverse());
-        } else {
-          setReports([]);
-        }
-      })
-      .catch((err) => {
-        setMessage('Произошла ошибка');
+  const fetchReports = () => createRequest<Array<IDailyReport>>('fetchReports')
+    .then(({ data, status }) => {
+      if (status === 'OK' && data) {
+        setReports(data.reverse());
+      } else {
         setReports([]);
-      })
-  };
+      }
+    })
+    .catch((err) => {
+      setMessage('Произошла ошибка');
+      setReports([]);
+    });
 
   useEffect(() => {
     if (!reports) {
@@ -56,16 +78,14 @@ export default function DailyReportScreen({ navigation } : any) {
     }
   }, [reports]);
 
-  const renderItem = ({ item }: { item: IDailyReport }) => {
-    return (
-      <SwipeListItem
-        iconName="file-text"
-        title={item.adminName}
-        subtitle={item.date}
-        primaryText={formatAmountString(item.totalSum)}
-      />
-    );
-  }
+  const renderItem = ({ item }: { item: IDailyReport }) => (
+    <SwipeListItem
+      iconName="file-text"
+      title={item.adminName}
+      subtitle={item.date}
+      primaryText={formatAmountString(item.totalSum)}
+    />
+  );
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -77,28 +97,28 @@ export default function DailyReportScreen({ navigation } : any) {
   const onReload = () => {
     setLoading(true);
     fetchReports().then(() => setLoading(false));
-  }
+  };
 
-  const rightActionComponent = <Icon style={styles.swipeListIcon} name='eye'/>
-  const leftActionComponent = <Icon style={styles.swipeListIcon} name='edit'/>
+  const rightActionComponent = <Icon style={styles.swipeListIcon} name="eye" />;
+  const leftActionComponent = <Icon style={styles.swipeListIcon} name="edit" />;
 
   const onRightAction = (id: string) => {
     actionSheetRef.current?.setModalVisible(true);
     const report = reports?.find(item => item.id === id);
 
     setShowReportData(report);
-  }
+  };
 
   const onLeftAction = (id: string) => {
     navigation.navigate('AddDailyReport', {
       report: reports?.find(item => item.id === id),
       type: 'update'
     });
-  }
+  };
 
   return (
     <Layout style={styles.container}>
-      {loading && <Layout style={styles.loading}><Spinner/></Layout>}
+      {loading && <Layout style={styles.loading}><Spinner /></Layout>}
       {!loading && (
         <>
           <SwipeList
@@ -114,17 +134,19 @@ export default function DailyReportScreen({ navigation } : any) {
           />
           {reports?.length === 0 && (
             <Layout>
-              <Text status='info'>Отчетов пока нет</Text>
+              <Text status="info">Отчетов пока нет</Text>
               <Button
                 onPress={onReload}
                 style={styles.reloadButton}
-                appearance='outline'
-                status='info'
+                appearance="outline"
+                status="info"
                 accessoryLeft={ReloadIcon}
-              >Обновить</Button>
+              >
+                Обновить
+              </Button>
             </Layout>
           )}
-          {message && <Text status='danger'>{message}</Text>}
+          {message && <Text status="danger">{message}</Text>}
         </>
       )}
       <ActionSheet
@@ -138,27 +160,3 @@ export default function DailyReportScreen({ navigation } : any) {
     </Layout>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 12
-  },
-  loading: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  swipeListIcon: {
-    width: 24,
-    height: 24,
-    tintColor: '#fff',
-    marginHorizontal: 8
-  },
-  reloadButton: {
-    marginTop: 32
-  },
-  sheet: {
-    padding: 16
-  }
-});

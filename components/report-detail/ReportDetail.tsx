@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
-import { Divider, Layout, Text } from "@ui-kitten/components";
-import { IDailyReport } from "../../screens/daily-report-screen/DailyReportScreen";
-import { StyleSheet } from "react-native";
-import { formatAmountString } from "../utils/formatAmountString";
+import { StyleSheet } from 'react-native';
+import { Divider, Layout, Text } from '@ui-kitten/components';
+import { IDailyReport } from '../../screens/daily-report-screen/DailyReportScreen';
+import { formatAmountString } from '../utils/formatAmountString';
 
 interface IReportDetail {
   data?: IDailyReport;
@@ -33,17 +33,17 @@ const styles = StyleSheet.create({
   }
 });
 
-
 const ReportDetail: FC<IReportDetail> = ({ data }) => {
   if (!data) {
     return null;
   }
 
-  const renderItem = (label: string, value: string, bold: boolean = false) => <Layout style={styles.item}>
-    <Text category="label" style={styles.label}>{label}</Text>
-    <Text category="h6" style={bold && { fontWeight: 'bold' }}>{value}</Text>
-  </Layout>;
-
+  const renderItem = (label: string, value: string, bold = false) => (
+    <Layout style={styles.item}>
+      <Text category="label" style={styles.label}>{label}</Text>
+      <Text category="h6" style={bold && { fontWeight: 'bold' }}>{value}</Text>
+    </Layout>
+  );
 
   return (
     <Layout style={styles.container}>
@@ -52,7 +52,7 @@ const ReportDetail: FC<IReportDetail> = ({ data }) => {
         {renderItem('Дата', data?.date)}
         {renderItem('Общая выручка', formatAmountString(data?.totalSum), true)}
       </Layout>
-      <Divider style={styles.divider}/>
+      <Divider style={styles.divider} />
       <Layout>
         <Text category="h6">ИП Багдасарян</Text>
         <Layout style={styles.header}>
@@ -60,7 +60,7 @@ const ReportDetail: FC<IReportDetail> = ({ data }) => {
           {renderItem('Эквайринг', formatAmountString(data?.ipAcquiring))}
         </Layout>
       </Layout>
-      <Divider style={styles.divider}/>
+      <Divider style={styles.divider} />
 
       <Layout>
         <Text category="h6">ООО ХашЛаваш</Text>
@@ -69,7 +69,7 @@ const ReportDetail: FC<IReportDetail> = ({ data }) => {
           {renderItem('Эквайринг', formatAmountString(data?.oooAcquiring))}
         </Layout>
       </Layout>
-      <Divider style={styles.divider}/>
+      <Divider style={styles.divider} />
 
       <Layout>
         <Text category="h6" style={{ marginBottom: 16 }}>Расходные операции</Text>
@@ -86,6 +86,5 @@ const ReportDetail: FC<IReportDetail> = ({ data }) => {
     </Layout>
   );
 };
-
 
 export default ReportDetail;

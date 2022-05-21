@@ -7,6 +7,9 @@
     "navigation/**/*.ts",
     "screens/**/*.tsx",
     "core/*.ts",
+    "hooks/*.ts",
+    "*.tsx",
+    "*.ts",
     ".eslintrc.js"
   ]
 }

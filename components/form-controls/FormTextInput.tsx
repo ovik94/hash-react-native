@@ -1,7 +1,7 @@
 import React from 'react';
 import { Controller, FieldError } from 'react-hook-form';
 import { StyleSheet, KeyboardType } from 'react-native';
-import { Input, Layout } from "@ui-kitten/components";
+import { Input, Layout } from '@ui-kitten/components';
 
 interface IFormTextInput {
   name: string;
@@ -16,6 +16,12 @@ interface IFormTextInput {
   [otherProps: string]: any
 }
 
+const styles = StyleSheet.create({
+  container: {
+    marginVertical: 16
+  }
+});
+
 export default function FormTextInput({
   name,
   control,
@@ -27,7 +33,6 @@ export default function FormTextInput({
   required,
   ...otherProps
 }: IFormTextInput) {
-
   return (
     <Controller
       control={control}
@@ -36,7 +41,7 @@ export default function FormTextInput({
       }}
       name={name}
       defaultValue={defaultValue}
-      render={({ field: { onChange, onBlur, value } }) => (
+      render={({ field: { onChange, value } }) => (
         <Layout style={styles.container}>
           <Input
             label={label}
@@ -50,11 +55,5 @@ export default function FormTextInput({
         </Layout>
       )}
     />
-  )
+  );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    marginVertical: 16
-  }
-});

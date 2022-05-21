@@ -1,11 +1,11 @@
 import React, { useRef, useState } from 'react';
+import { Animated, StyleSheet } from 'react-native';
 import uuid from 'react-native-uuid';
-import { Animated, StyleSheet } from "react-native";
-import { Button, Card, Icon, IndexPath, Input, Layout, Modal, Select, SelectItem, Text } from "@ui-kitten/components";
-import Colors from "../../constants/Colors";
-import SwipeList from "../swipe-list/SwipeList";
-import SwipeListItem from "../swipe-list-item/SwipeListItem";
-import { formatAmountString } from "../utils/formatAmountString";
+import { Button, Card, Icon, IndexPath, Input, Layout, Modal, Select, SelectItem, Text } from '@ui-kitten/components';
+import Colors from '../../constants/Colors';
+import SwipeListItem from '../swipe-list-item/SwipeListItem';
+import SwipeList from '../swipe-list/SwipeList';
+import { formatAmountString } from '../utils/formatAmountString';
 
 export interface IExpense {
   id: string;
@@ -24,7 +24,9 @@ interface IAddExpense {
 }
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    marginVertical: 16
+  },
   backdrop: {
     backgroundColor: 'rgba(0, 0, 0, 0.5)'
   },
@@ -80,7 +82,7 @@ const Categories: Array<ICategory> = [
   { id: 'taxi', title: 'Такси', icon: 'car' },
   { id: 'marketing', title: 'Маркетинг, промо-материалы', icon: 'globe' },
   { id: 'household', title: 'Хоз. нужда', icon: 'globe' },
-  { id: 'other', title: 'Прочие расходы', icon: 'more-horizontal' },
+  { id: 'other', title: 'Прочие расходы', icon: 'more-horizontal' }
 ];
 
 export default function AddExpense({ onAdd, showModal, setShowModal, data, onDelete }: IAddExpense) {
@@ -91,7 +93,7 @@ export default function AddExpense({ onAdd, showModal, setShowModal, data, onDel
   const [hasErrorCategory, setErrorCategory] = useState(false);
   const [hasErrorSum, setErrorSum] = useState(false);
   const rowSwipeAnimatedValues: { [key: string]: Animated.Value } = {};
-  const animatedValueRef = useRef(rowSwipeAnimatedValues)
+  const animatedValueRef = useRef(rowSwipeAnimatedValues);
 
   const onSelect = (index: IndexPath | IndexPath[]) => {
     if (index instanceof IndexPath) {
@@ -102,12 +104,12 @@ export default function AddExpense({ onAdd, showModal, setShowModal, data, onDel
   };
 
   const onChangeSum = (nextValue: string) => {
-    setSum(nextValue)
+    setSum(nextValue);
     setErrorSum(false);
   };
 
   const onChangeComment = (value: string) => {
-    setComment(value)
+    setComment(value);
   };
 
   const clear = () => {
@@ -115,7 +117,8 @@ export default function AddExpense({ onAdd, showModal, setShowModal, data, onDel
     setSum(undefined);
     setErrorCategory(false);
     setErrorSum(false);
-  }
+    setComment(undefined);
+  };
 
   const onSubmit = () => {
     if (category && sum) {
@@ -130,7 +133,7 @@ export default function AddExpense({ onAdd, showModal, setShowModal, data, onDel
     if (!sum) {
       setErrorSum(true);
     }
-  }
+  };
 
   const onDeleteExpense = (id: string) => {
     Animated.timing(animatedValueRef.current[id], {
@@ -155,16 +158,16 @@ export default function AddExpense({ onAdd, showModal, setShowModal, data, onDel
         }}
       >
         <SwipeListItem
-          iconComponent={<Icon style={styles.expenseIcon} name={item.category.icon}/>}
+          iconComponent={<Icon style={styles.expenseIcon} name={item.category.icon} />}
           title={item.category.title}
           subtitle={item.comment}
           primaryText={formatAmountString(item.sum)}
         />
       </Animated.View>
     );
-  }
+  };
 
-  const rightActionComponent = <Icon style={styles.swipeListIcon} name='trash'/>
+  const rightActionComponent = <Icon style={styles.swipeListIcon} name="trash" />;
 
   return (
     <Layout style={styles.container}>
@@ -182,7 +185,7 @@ export default function AddExpense({ onAdd, showModal, setShowModal, data, onDel
         style={{ width: 300 }}
       >
         <Card>
-          <Text category='h6' style={styles.title}>Добавить расходную операцию</Text>
+          <Text category="h6" style={styles.title}>Добавить расходную операцию</Text>
           <Select
             style={styles.select}
             label="Категория расхода"
@@ -191,32 +194,32 @@ export default function AddExpense({ onAdd, showModal, setShowModal, data, onDel
             onSelect={onSelect}
             value={category?.title || 'Категория'}
           >
-            {Categories.map(category => (
+            {Categories.map(item => (
               <SelectItem
-                accessoryLeft={<Icon style={styles.categoryIcon} name={category.icon}/>}
-                title={category.title}
-                key={category.id}
+                accessoryLeft={<Icon style={styles.categoryIcon} name={item.icon} />}
+                title={item.title}
+                key={item.id}
               />
             ))}
           </Select>
           <Input
             style={styles.input}
             value={sum}
-            label='Сумма'
+            label="Сумма"
             status={hasErrorSum ? 'danger' : 'basic'}
-            placeholder='Введите сумму'
+            placeholder="Введите сумму"
             onChangeText={onChangeSum}
             keyboardType="decimal-pad"
           />
           <Input
             value={comment}
-            label='Комментарий'
-            placeholder='Введите комментарий'
+            label="Комментарий"
+            placeholder="Введите комментарий"
             onChangeText={onChangeComment}
           />
           <Button style={styles.button} onPress={onSubmit}>Добавить</Button>
         </Card>
       </Modal>
     </Layout>
-  )
+  );
 }

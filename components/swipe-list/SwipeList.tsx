@@ -1,7 +1,7 @@
-import { SwipeListView } from "react-native-swipe-list-view";
-import { StyleSheet, View, TouchableOpacity, Animated } from "react-native";
-import { Layout } from "@ui-kitten/components";
-import React, { useRef } from "react";
+import React, { useRef } from 'react';
+import { StyleSheet, View, TouchableOpacity, Animated } from 'react-native';
+import { SwipeListView } from 'react-native-swipe-list-view';
+import { Layout } from '@ui-kitten/components';
 
 const styles = StyleSheet.create({
   container: {},
@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-between'
   },
   backBtn: {
     alignItems: 'center',
@@ -17,20 +17,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     position: 'absolute',
     top: 0,
-    width: 75,
+    width: 75
   },
   backBtnLeft: {
     backgroundColor: '#CD3264',
-    left: 0,
+    left: 0
   },
   backBtnRight: {
     backgroundColor: '#147D78',
-    right: 0,
+    right: 0
   },
   trash: {
     height: 25,
-    width: 25,
-  },
+    width: 25
+  }
 });
 
 interface ISwipeList {
@@ -57,23 +57,23 @@ export default function SwipeList({
   ...otherProps
 }: ISwipeList) {
   const rowSwipeAnimatedValues: { [key: string]: Animated.Value } = {};
-  const animatedValueRef = useRef(rowSwipeAnimatedValues)
+  const animatedValueRef = useRef(rowSwipeAnimatedValues);
 
-  const renderHiddenItem = (data: any, rowMap: any) => {
-    if (!animatedValueRef.current[data.item.id]) {
-      animatedValueRef.current[data.item.id] = new Animated.Value(0);
+  const renderHiddenItem = ({ item }: any) => {
+    if (!animatedValueRef.current[item.id]) {
+      animatedValueRef.current[item.id] = new Animated.Value(0);
     }
 
     return (
       <View style={styles.rowBack}>
         <TouchableOpacity
           style={[styles.backBtn, styles.backBtnLeft]}
-          onPress={onLeftAction ? () => onLeftAction(data.item.id) : undefined}
+          onPress={onLeftAction ? () => onLeftAction(item.id) : undefined}
         >
           <Animated.View
             style={{
               transform: [{
-                scale: animatedValueRef.current[data.item.id]
+                scale: animatedValueRef.current[item.id]
                   .interpolate({
                     inputRange: [1, 90],
                     outputRange: [0, 1.5],
@@ -87,12 +87,12 @@ export default function SwipeList({
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.backBtn, styles.backBtnRight]}
-          onPress={onRightAction ? () => onRightAction(data.item.id) : undefined}
+          onPress={onRightAction ? () => onRightAction(item.id) : undefined}
         >
           <Animated.View
             style={{
               transform: [{
-                scale: animatedValueRef.current[data.item.id]
+                scale: animatedValueRef.current[item.id]
                   .interpolate({
                     inputRange: [1, 90],
                     outputRange: [0, 1.5],
@@ -106,7 +106,7 @@ export default function SwipeList({
         </TouchableOpacity>
       </View>
     );
-  }
+  };
 
   const onSwipeValueChange = (swipeData: { key: string; value: number; direction: 'left' | 'right'; isOpen: boolean; }) => {
     const { key, value } = swipeData;
@@ -125,8 +125,8 @@ export default function SwipeList({
         stopRightSwipe={-75}
         useNativeDriver={false}
         onSwipeValueChange={onSwipeValueChange}
-        disableLeftSwipe={!Boolean(rightActionComponent)}
-        disableRightSwipe={!Boolean(leftActionComponent)}
+        disableLeftSwipe={!rightActionComponent}
+        disableRightSwipe={!leftActionComponent}
         {...otherProps}
       />
     </Layout>

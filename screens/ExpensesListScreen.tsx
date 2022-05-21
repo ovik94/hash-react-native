@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react';
-import { Button, Icon, IconProps, Layout } from "@ui-kitten/components";
-import AddExpense, { IExpense } from "../components/add-expense/AddExpense";
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
+import { Button, Icon, IconProps, Layout } from '@ui-kitten/components';
+import AddExpense, { IExpense } from '../components/add-expense/AddExpense';
 
 interface IExpensesListScreen {
 }
@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
 });
 
 const AddIcon = (props: IconProps) => (
-  <Icon {...props} name='plus'/>
+  <Icon {...props} name="plus" />
 );
 
 const ExpensesListScreen: FC<IExpensesListScreen> = () => {
@@ -46,7 +46,7 @@ const ExpensesListScreen: FC<IExpensesListScreen> = () => {
       <Layout style={styles.header}>
         <Button
           style={{ width: '100%' }}
-          accessoryLeft={<AddIcon/>}
+          accessoryLeft={<AddIcon />}
           appearance="outline"
           onPress={() => setShowAdd(true)}
         >
@@ -61,7 +61,7 @@ const ExpensesListScreen: FC<IExpensesListScreen> = () => {
         setShowModal={setShowAdd}
       />
     </Layout>
-  )
+  );
 };
 
 export default ExpensesListScreen;

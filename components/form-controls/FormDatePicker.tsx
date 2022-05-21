@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Controller, FieldError } from 'react-hook-form';
 import { StyleSheet } from 'react-native';
 import { Datepicker, Icon, IconProps, Layout, NativeDateService } from '@ui-kitten/components';
-import { I18nDayNames, I18nMonthNames } from "@ui-kitten/components/ui/calendar/i18n/type";
-import dateFormatter from "../utils/dateFormatter";
+import { I18nDayNames, I18nMonthNames } from '@ui-kitten/components/ui/calendar/i18n/type';
 
 interface IFormDatePicker {
   name: string;
@@ -11,7 +10,6 @@ interface IFormDatePicker {
   control: any;
   defaultValue?: string | Date;
   caption?: string;
-  disabled?: boolean;
   error?: FieldError;
   required?: boolean;
 }
@@ -19,7 +17,7 @@ interface IFormDatePicker {
 const i18n: { dayNames: I18nDayNames; monthNames: I18nMonthNames } = {
   dayNames: {
     short: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
-    long: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
+    long: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']
   },
   monthNames: {
     short: ['Янв', 'Фев', 'Март', 'Апр', 'Май', 'Июнь', 'Июль', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
@@ -35,14 +33,20 @@ const i18n: { dayNames: I18nDayNames; monthNames: I18nMonthNames } = {
       'Сентябрь',
       'Октябрь',
       'Ноябрь',
-      'Декабрь',
-    ],
-  },
+      'Декабрь'
+    ]
+  }
 };
 
 const CalendarIcon = (props: IconProps) => (
-  <Icon {...props} name='calendar' />
+  <Icon {...props} name="calendar" />
 );
+
+const styles = StyleSheet.create({
+  container: {
+    marginVertical: 16
+  }
+});
 
 export default function FormDatePicker({
   name,
@@ -51,7 +55,7 @@ export default function FormDatePicker({
   error,
   caption,
   required,
-  defaultValue = new Date(),
+  defaultValue = new Date()
 }: IFormDatePicker) {
   const formatDateService = new NativeDateService('ru', { format: 'DD.MM.YYYY', startDayOfWeek: 1, i18n });
 
@@ -76,21 +80,15 @@ export default function FormDatePicker({
               label={label}
               status={error ? 'danger' : 'basic'}
               caption={error?.message || caption}
-              placeholder='дд.мм.гггг'
+              placeholder="дд.мм.гггг"
               date={value}
               onSelect={onChangeDate}
               accessoryRight={CalendarIcon}
               dateService={formatDateService}
             />
           </Layout>
-        )
+        );
       }}
     />
-  )
+  );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    marginVertical: 16
-  },
-});

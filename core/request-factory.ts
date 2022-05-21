@@ -1,7 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { IMessage, IResponseData } from "../types";
-// @ts-ignore
-import { API_URL } from 'react-native-dotenv';
+import { IMessage, IResponseData } from '../types';
 
 export enum RequestMethods {
   GET = 'GET',
@@ -33,6 +31,7 @@ export default class RequestFactory {
     this.options = options;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   protected onSuccess = <T>(response: AxiosResponse<IResponseData<T>>): Promise<IResponseData<T>> => {
     const responseBody = response.data;
 
@@ -75,7 +74,7 @@ export default class RequestFactory {
     const headers: Record<string, any> = {
       ...methodHeaders,
       ...requestHeaders,
-      'X-Requested-With': 'XMLHttpRequest',
+      'X-Requested-With': 'XMLHttpRequest'
     };
 
     if (!isFormData) {

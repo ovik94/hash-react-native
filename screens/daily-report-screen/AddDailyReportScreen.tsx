@@ -1,13 +1,13 @@
 import React, { createRef, useContext, useState } from 'react';
 import { StyleSheet } from 'react-native';
-import { Button, Icon, Layout, Spinner, Text, ViewPager } from "@ui-kitten/components";
-import InfoStep from "./InfoStep";
-import ReceiptsStep from "./ReceiptsStep";
-import ExpensesStep from "./ExpensesStep";
-import { CoreContext } from "../../core/CoreContext";
-import { IDailyReport } from "./DailyReportScreen";
-import ActionSheet from "react-native-actions-sheet";
-import Colors from "../../constants/Colors";
+import ActionSheet from 'react-native-actions-sheet';
+import { Button, Icon, Layout, Spinner, Text, ViewPager } from '@ui-kitten/components';
+import Colors from '../../constants/Colors';
+import { CoreContext } from '../../core/CoreContext';
+import { IDailyReport } from './DailyReportScreen';
+import ExpensesStep from './ExpensesStep';
+import InfoStep from './InfoStep';
+import ReceiptsStep from './ReceiptsStep';
 
 const StepScreens = [InfoStep, ReceiptsStep, ExpensesStep];
 
@@ -18,6 +18,35 @@ export interface IStepProps {
   data: IDailyReport;
   onComplete: (data: IDailyReport) => void
 }
+
+const styles = StyleSheet.create({
+  stepContainer: {
+    paddingHorizontal: 16
+  },
+  loading: {
+    flex: 1,
+    marginTop: 40,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  sheet: {
+    padding: 16
+  },
+  sheetContent: {
+    width: '100%',
+    minHeight: 200,
+    padding: 32
+  },
+  sheetButton: {
+    width: '100%',
+    marginTop: 32
+  },
+  sheetIcon: {
+    width: 32,
+    height: 32,
+    marginHorizontal: 8
+  }
+});
 
 export default function AddDailyReportScreen({ navigation, route }: any) {
   const [step, setStep] = useState(0);
@@ -40,11 +69,11 @@ export default function AddDailyReportScreen({ navigation, route }: any) {
     setStep(step - 1);
   };
 
-  const onComplete = (data: IDailyReport) => {
+  const onComplete = (result: IDailyReport) => {
     setLoading(true);
     actionSheetRef.current?.setModalVisible(true);
 
-    createRequest(type === 'add' ? 'addReport' : 'updateReport', data)
+    createRequest(type === 'add' ? 'addReport' : 'updateReport', result)
       .then(({ status }) => {
         if (status !== 'OK') {
           setMessage('Что-то пошло не так. Отчет не добавился');
@@ -53,7 +82,7 @@ export default function AddDailyReportScreen({ navigation, route }: any) {
       .catch((err) => {
         setMessage('Что-то пошло не так. Отчет не добавился');
       })
-      .finally(() => setLoading(false))
+      .finally(() => setLoading(false));
   };
 
   return (
@@ -86,7 +115,7 @@ export default function AddDailyReportScreen({ navigation, route }: any) {
         onClose={() => navigation.navigate('Root')}
       >
         <Layout style={styles.sheetContent}>
-          {loading && <Layout style={styles.loading}><Spinner/></Layout>}
+          {loading && <Layout style={styles.loading}><Spinner /></Layout>}
           {!loading && (
             <Layout>
               <Layout style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -108,32 +137,3 @@ export default function AddDailyReportScreen({ navigation, route }: any) {
     </Layout>
   );
 }
-
-const styles = StyleSheet.create({
-  stepContainer: {
-    paddingHorizontal: 16
-  },
-  loading: {
-    flex: 1,
-    marginTop: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  sheet: {
-    padding: 16
-  },
-  sheetContent: {
-    width: '100%',
-    minHeight: 200,
-    padding: 32
-  },
-  sheetButton: {
-    width: '100%',
-    marginTop: 32
-  },
-  sheetIcon: {
-    width: 32,
-    height: 32,
-    marginHorizontal: 8
-  }
-});

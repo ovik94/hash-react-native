@@ -1,12 +1,12 @@
-import React  from 'react';
-import { useForm } from "react-hook-form";
+import React from 'react';
+import { useForm } from 'react-hook-form';
 import { ViewStyle, StyleProp } from 'react-native';
-import FormDatePicker from "../../components/form-controls/FormDatePicker";
-import FormSelect from "../../components/form-controls/FormSelect";
-import Styles from "../../constants/Styles";
-import dateFormatter from "../../components/utils/dateFormatter";
-import { IStepProps } from "./AddDailyReportScreen";
-import { Button, Layout, Text } from "@ui-kitten/components";
+import { Button, Layout, Text } from '@ui-kitten/components';
+import FormDatePicker from '../../components/form-controls/FormDatePicker';
+import FormSelect from '../../components/form-controls/FormSelect';
+import dateFormatter from '../../components/utils/dateFormatter';
+import Styles from '../../constants/Styles';
+import { IStepProps } from './AddDailyReportScreen';
 
 type FormData = {
   date: string;
@@ -27,10 +27,10 @@ export default function InfoStep({ onNext, data, setData }: IStepProps) {
     }
   });
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = (newData: FormData) => {
     onNext();
-    setData({ ...data, date: dateFormatter(data.date) })
-  }
+    setData({ ...newData, date: dateFormatter(newData.date) });
+  };
 
   return (
     <Layout style={Styles.stepForm as StyleProp<ViewStyle>}>
@@ -40,7 +40,7 @@ export default function InfoStep({ onNext, data, setData }: IStepProps) {
           items={SelectOptions}
           name="adminName"
           label="Администратор"
-          placeholder='Имя'
+          placeholder="Имя"
           error={errors.adminName}
           control={control}
           required
@@ -54,7 +54,7 @@ export default function InfoStep({ onNext, data, setData }: IStepProps) {
         />
       </Layout>
       <Layout style={Styles.stepButtons as StyleProp<ViewStyle>}>
-        <Button appearance='outline' disabled style={{ width: '45%' } as StyleProp<ViewStyle>}>
+        <Button appearance="outline" disabled style={{ width: '45%' } as StyleProp<ViewStyle>}>
           Назад
         </Button>
         <Button onPress={handleSubmit(onSubmit)} style={{ width: '45%' } as StyleProp<ViewStyle>}>

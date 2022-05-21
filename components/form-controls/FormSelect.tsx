@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Controller, FieldError } from 'react-hook-form';
-import { IndexPath, Layout, Select, SelectItem } from "@ui-kitten/components";
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
+import { IndexPath, Layout, Select, SelectItem } from '@ui-kitten/components';
 
 interface IFormSelect {
   name: string;
@@ -36,6 +36,8 @@ export default function FormSelect({
   caption,
   ...otherProps
 }: IFormSelect) {
+  const [selectedIndex, setSelectedIndex] = useState(new IndexPath(0));
+
   return (
     <Controller
       control={control}
@@ -45,8 +47,6 @@ export default function FormSelect({
       defaultValue={defaultValue}
       name={name}
       render={({ field: { onChange, value } }) => {
-        const [selectedIndex, setSelectedIndex] = useState(new IndexPath(0));
-
         const onSelect = (index: IndexPath | IndexPath[]) => {
           if (index instanceof IndexPath) {
             const selectedValue = items[index.row].value;
@@ -67,11 +67,11 @@ export default function FormSelect({
               caption={error?.message || caption}
               {...otherProps}
             >
-              {items.map(item => <SelectItem title={item.label} key={item.value}/>)}
+              {items.map(item => <SelectItem title={item.label} key={item.value} />)}
             </Select>
           </Layout>
-        )
+        );
       }}
     />
-  )
-};
+  );
+}

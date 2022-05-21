@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useForm, useWatch } from "react-hook-form";
+import { useForm, useWatch } from 'react-hook-form';
 import { ViewStyle, StyleProp } from 'react-native';
-import Styles from "../../constants/Styles";
-import FormTextInput from "../../components/form-controls/FormTextInput";
-import { IStepProps } from "./AddDailyReportScreen";
-import { Button, Layout, Text } from "@ui-kitten/components";
-import { formatAmountString } from "../../components/utils/formatAmountString";
+import { Button, Layout, Text } from '@ui-kitten/components';
+import FormTextInput from '../../components/form-controls/FormTextInput';
+import { formatAmountString } from '../../components/utils/formatAmountString';
+import Styles from '../../constants/Styles';
+import { IStepProps } from './AddDailyReportScreen';
 
 type FormData = {
   ipCash: string;
@@ -16,20 +16,20 @@ type FormData = {
 };
 
 export default function ReceiptsStep({ onNext, onPrevious, data, setData }: IStepProps) {
-  const { control, handleSubmit, formState: { errors }, setValue, getValues } = useForm<FormData>({
+  const { control, handleSubmit, formState: { errors }, setValue } = useForm<FormData>({
     defaultValues: {
       ipCash: data?.ipCash || '0',
       ipAcquiring: data?.ipAcquiring || '0',
       oooCash: data?.oooCash || '0',
       oooAcquiring: data?.oooAcquiring || '0',
-      totalSum: data?.ipCash + data?.ipAcquiring + data?.oooCash + data?.oooAcquiring || '0'
+      totalSum: String(Number(data?.ipCash) + Number(data?.ipAcquiring) + Number(data?.oooCash) + Number(data?.oooAcquiring)) || '0'
     }
   });
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = (newData: FormData) => {
     onNext();
-    setData(data)
-  }
+    setData(newData);
+  };
 
   const ipCashValue = useWatch({ control, name: 'ipCash' });
   const ipAcquiringValue = useWatch({ control, name: 'ipAcquiring' });
@@ -51,7 +51,7 @@ export default function ReceiptsStep({ onNext, onPrevious, data, setData }: ISte
             <Text style={{ fontWeight: 'bold' }}>ИП Багдасарян Р.С</Text>
             <FormTextInput
               name="ipCash"
-              label='Наличные'
+              label="Наличные"
               control={control}
               type="decimal-pad"
               error={errors.ipCash}
@@ -60,7 +60,7 @@ export default function ReceiptsStep({ onNext, onPrevious, data, setData }: ISte
 
             <FormTextInput
               name="ipAcquiring"
-              label='Эквайринг'
+              label="Эквайринг"
               control={control}
               error={errors.ipAcquiring}
               type="decimal-pad"
@@ -71,7 +71,7 @@ export default function ReceiptsStep({ onNext, onPrevious, data, setData }: ISte
             <Text style={{ fontWeight: 'bold' }}>ООО ХашЛаваш</Text>
             <FormTextInput
               name="oooCash"
-              label='Наличные'
+              label="Наличные"
               control={control}
               type="decimal-pad"
               error={errors.oooCash}
@@ -80,7 +80,7 @@ export default function ReceiptsStep({ onNext, onPrevious, data, setData }: ISte
 
             <FormTextInput
               name="oooAcquiring"
-              label='Эквайринг'
+              label="Эквайринг"
               control={control}
               error={errors.oooAcquiring}
               type="decimal-pad"
@@ -90,13 +90,13 @@ export default function ReceiptsStep({ onNext, onPrevious, data, setData }: ISte
         </Layout>
 
         <Layout style={{ marginTop: 16 }}>
-          <Text category="label" style={{ opacity:0.7, marginBottom: 4}}>Общая выручка</Text>
+          <Text category="label" style={{ opacity: 0.7, marginBottom: 4 }}>Общая выручка</Text>
           <Text category="h5" style={{ fontWeight: 'bold' }}>{formatAmountString(totalSumValue)}</Text>
         </Layout>
       </Layout>
 
       <Layout style={Styles.stepButtons as StyleProp<ViewStyle>}>
-        <Button onPress={onPrevious} appearance='outline' style={{ width: '45%' } as StyleProp<ViewStyle>}>
+        <Button onPress={onPrevious} appearance="outline" style={{ width: '45%' } as StyleProp<ViewStyle>}>
           Назад
         </Button>
         <Button onPress={handleSubmit(onSubmit)} style={{ width: '45%' } as StyleProp<ViewStyle>}>

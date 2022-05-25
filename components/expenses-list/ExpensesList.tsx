@@ -15,12 +15,15 @@ export interface IExpense {
   comment?: string;
 }
 
-interface IAddExpense {
+interface IExpensesList {
   data: Array<IExpense> | null;
-  onAdd: (data: IExpense) => void;
+  onAdd: (data: any) => void;
   onDelete: (id: string) => void;
   showModal: boolean;
   setShowModal: (value: boolean) => void;
+  refreshing?: boolean;
+  onRefresh?: () => void;
+  hasDeleteAnimation?: boolean;
 }
 
 const styles = StyleSheet.create({
@@ -85,13 +88,23 @@ const Categories: Array<ICategory> = [
   { id: 'other', title: 'Прочие расходы', icon: 'more-horizontal' }
 ];
 
-export default function AddExpense({ onAdd, showModal, setShowModal, data, onDelete }: IAddExpense) {
+export default function ExpensesList({
+  onAdd,
+  showModal,
+  setShowModal,
+  data,
+  onDelete,
+  refreshing = false,
+  onRefresh = undefined,
+  hasDeleteAnimation = false
+}: IExpensesList) {
   const [selectedIndex, setSelectedIndex] = useState(new IndexPath(0));
   const [category, setCategory] = useState<ICategory | undefined>(undefined);
   const [sum, setSum] = useState<string | undefined>(undefined);
   const [comment, setComment] = useState<string | undefined>(undefined);
   const [hasErrorCategory, setErrorCategory] = useState(false);
   const [hasErrorSum, setErrorSum] = useState(false);
+
   const rowSwipeAnimatedValues: { [key: string]: Animated.Value } = {};
   const animatedValueRef = useRef(rowSwipeAnimatedValues);
 
@@ -136,11 +149,15 @@ export default function AddExpense({ onAdd, showModal, setShowModal, data, onDel
   };
 
   const onDeleteExpense = (id: string) => {
-    Animated.timing(animatedValueRef.current[id], {
-      toValue: 0,
-      duration: 300,
-      useNativeDriver: false
-    }).start(() => onDelete(id));
+    if (hasDeleteAnimation) {
+      Animated.timing(animatedValueRef.current[id], {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: false
+      }).start(() => onDelete(id));
+    } else {
+      onDelete(id);
+    }
   };
 
   const renderItem = ({ item }: { item: IExpense }) => {
@@ -150,12 +167,12 @@ export default function AddExpense({ onAdd, showModal, setShowModal, data, onDel
 
     return (
       <Animated.View
-        style={{
+        style={hasDeleteAnimation ? {
           height: animatedValueRef.current[item.id].interpolate({
             inputRange: [0, 1],
             outputRange: [0, 50]
           })
-        }}
+        } : { height: 50 }}
       >
         <SwipeListItem
           iconComponent={<Icon style={styles.expenseIcon} name={item.category.icon} />}
@@ -177,6 +194,8 @@ export default function AddExpense({ onAdd, showModal, setShowModal, data, onDel
         rightActionComponent={rightActionComponent}
         keyExtractor={(item: IExpense) => item.id}
         onRightAction={onDeleteExpense}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
       />
       <Modal
         visible={showModal}

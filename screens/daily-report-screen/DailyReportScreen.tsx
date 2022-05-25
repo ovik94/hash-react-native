@@ -2,7 +2,7 @@ import React, { createRef, useContext, useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import ActionSheet from 'react-native-actions-sheet';
 import { Button, Icon, IconProps, Layout, Spinner, Text } from '@ui-kitten/components';
-import { IExpense } from '../../components/add-expense/AddExpense';
+import { IExpense } from '../../components/expenses-list/ExpensesList';
 import ReportDetail from '../../components/report-detail/ReportDetail';
 import SwipeListItem from '../../components/swipe-list-item/SwipeListItem';
 import SwipeList from '../../components/swipe-list/SwipeList';
@@ -55,6 +55,7 @@ export default function DailyReportScreen({ navigation }: any) {
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [showReportData, setShowReportData] = useState<IDailyReport>();
+  const [refreshing, setRefreshing] = useState(false);
 
   const actionSheetRef = createRef<ActionSheet>();
 
@@ -86,8 +87,6 @@ export default function DailyReportScreen({ navigation }: any) {
       primaryText={formatAmountString(item.totalSum)}
     />
   );
-
-  const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = () => {
     setRefreshing(true);

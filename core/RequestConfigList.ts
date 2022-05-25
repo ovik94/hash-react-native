@@ -12,6 +12,18 @@ const RequestConfigList: IRequestConfigList = {
   updateReport: {
     method: RequestMethods.POST,
     path: '/api/app/dailyReport/update'
+  },
+  fetchExpenses: {
+    method: RequestMethods.GET,
+    path: '/api/app/expenses'
+  },
+  addExpense: {
+    method: RequestMethods.POST,
+    path: '/api/app/expenses/add'
+  },
+  deleteExpense: {
+    method: RequestMethods.POST,
+    path: '/api/app/expenses/delete'
   }
 };
 

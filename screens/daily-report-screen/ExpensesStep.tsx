@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { StyleSheet, ViewStyle, StyleProp } from 'react-native';
 import { Button, Icon, Layout, Text } from '@ui-kitten/components';
-import AddExpense, { IExpense } from '../../components/add-expense/AddExpense';
+import AddExpense, { IExpense } from '../../components/expenses-list/ExpensesList';
+import ExpensesList from '../../components/expenses-list/ExpensesList';
 import Colors from '../../constants/Colors';
 import Styles from '../../constants/Styles';
+import { CoreContext } from '../../core/CoreContext';
 import { IStepProps } from './AddDailyReportScreen';
 
 const styles = StyleSheet.create({
@@ -19,9 +21,28 @@ const styles = StyleSheet.create({
   }
 });
 
-export default function ExpensesStep({ onComplete, onPrevious, data }: IStepProps) {
+export default function ExpensesStep({ onComplete, onPrevious, data, type }: IStepProps) {
+  const { createRequest } = useContext(CoreContext);
   const [expenses, setExpenses] = useState<Array<IExpense> | null>(data.expenses || null);
   const [showAdd, setShowAdd] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const fetchExpenses = () => createRequest<Array<IExpense>>('fetchExpenses')
+    .then((res) => {
+      if (res.status === 'OK' && res.data) {
+        setExpenses(res.data);
+      }
+    })
+    .catch(() => {
+      setExpenses([]);
+    });
+
+  useEffect(() => {
+    if (type === 'add') {
+      setLoading(true);
+      fetchExpenses().finally(() => setLoading(false));
+    }
+  }, []);
 
   const onSubmit = () => {
     const resultData = { ...data, expenses };
@@ -47,15 +68,16 @@ export default function ExpensesStep({ onComplete, onPrevious, data }: IStepProp
     <Layout style={Styles.stepForm as StyleProp<ViewStyle>}>
       <Layout style={Styles.stepContent as StyleProp<ViewStyle>}>
         <Layout style={styles.header}>
-          <Text category="h5">Добавить расход</Text>
+          <Text category="h5">Расходы за день</Text>
           <Icon name="plus" style={styles.addIcon} onPress={() => setShowAdd(true)} />
         </Layout>
-        <AddExpense
+        <ExpensesList
           data={expenses}
           onDelete={onDelete}
           onAdd={onAddExpense}
           showModal={showAdd}
           setShowModal={setShowAdd}
+          hasDeleteAnimation
         />
       </Layout>
       <Layout style={Styles.stepButtons as StyleProp<ViewStyle>}>

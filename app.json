@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "hash-react-native",
+    "name": "ХашЛаваш Админ",
     "slug": "hash-react-native",
     "version": "1.0.0",
     "owner": "ovik",
@@ -9,9 +9,9 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/images/icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#f4eddb"
     },
     "updates": {
       "fallbackToCacheTimeout": 0

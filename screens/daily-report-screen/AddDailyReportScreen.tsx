@@ -16,7 +16,8 @@ export interface IStepProps {
   onPrevious: () => void;
   setData: (value: any) => void;
   data: IDailyReport;
-  onComplete: (data: IDailyReport) => void
+  onComplete: (data: IDailyReport) => void;
+  type: string;
 }
 
 const styles = StyleSheet.create({
@@ -95,6 +96,7 @@ export default function AddDailyReportScreen({ navigation, route }: any) {
         {StepScreens.map((screen, index) => {
           const StepComponent = screen;
           return (
+            // eslint-disable-next-line react/no-array-index-key
             <Layout style={{ ...styles.stepContainer, height: modalHeight + 155 }} key={index}>
               <StepComponent
                 onNext={onNext}
@@ -102,6 +104,7 @@ export default function AddDailyReportScreen({ navigation, route }: any) {
                 data={data}
                 setData={setNewData}
                 onComplete={onComplete}
+                type={type}
               />
             </Layout>
           );

@@ -35,7 +35,6 @@ export default class RequestFactory {
   protected onSuccess = <T>(response: AxiosResponse<IResponseData<T>>): Promise<IResponseData<T>> => {
     const responseBody = response.data;
 
-    console.log(responseBody, 'responseBody');
     const messages = responseBody.messages || [];
     const formMessages: IResponseData<T>['messages'] = [];
     const fieldMessages: IResponseData<T>['fieldMessages'] = {};

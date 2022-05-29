@@ -24,6 +24,10 @@ const RequestConfigList: IRequestConfigList = {
   deleteExpense: {
     method: RequestMethods.POST,
     path: '/api/app/expenses/delete'
+  },
+  fetchCounterparties: {
+    method: RequestMethods.GET,
+    path: '/api/counterparties'
   }
 };
 

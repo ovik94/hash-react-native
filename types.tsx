@@ -1,14 +1,14 @@
-// @ts-ignore
-// @ts-ignore
-
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import RequestFactory from "./core/request-factory";
+import RequestFactory from './core/request-factory';
+import { RootStore } from './stores/RootStore';
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace ReactNavigation {
-    interface RootParamList extends RootStackParamList {}
+    // @ts-ignore
+    type RootParamList = RootStackParamList;
   }
 }
 
@@ -16,12 +16,13 @@ export type RootStackParamList = {
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
   AddDailyReport: undefined;
   ExpensesList: undefined;
+  AddExpense: undefined;
   NotFound: undefined;
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> = NativeStackScreenProps<
-  RootStackParamList,
-  Screen
+RootStackParamList,
+Screen
 >;
 
 export type RootTabParamList = {
@@ -31,14 +32,18 @@ export type RootTabParamList = {
 };
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> = CompositeScreenProps<
-  BottomTabScreenProps<RootTabParamList, Screen>,
-  NativeStackScreenProps<RootStackParamList>
+BottomTabScreenProps<RootTabParamList, Screen>,
+NativeStackScreenProps<RootStackParamList>
 >;
 
 export interface IMainAppOptions {
   createRequest: RequestFactory['createRequest'];
+  locale: Record<string, any>;
+  store: RootStore;
+}
+
+export interface IContextOptions {
   modalHeight: number
-  locale?: Record<string, any>
 }
 
 export interface IMessage {

@@ -1,10 +1,12 @@
 import React, { createRef, useContext, useState } from 'react';
+import { observer } from 'mobx-react-lite';
 import { StyleSheet } from 'react-native';
 import ActionSheet from 'react-native-actions-sheet';
 import { Button, Icon, Layout, Spinner, Text, ViewPager } from '@ui-kitten/components';
 import Colors from '../../constants/Colors';
 import { CoreContext } from '../../core/CoreContext';
-import { IDailyReport } from './DailyReportScreen';
+import useStores from '../../hooks/useStores';
+import { IDailyReport } from '../../stores/DailyReportsStore';
 import ExpensesStep from './ExpensesStep';
 import InfoStep from './InfoStep';
 import ReceiptsStep from './ReceiptsStep';
@@ -18,6 +20,7 @@ export interface IStepProps {
   data: IDailyReport;
   onComplete: (data: IDailyReport) => void;
   type: string;
+  navigation: any;
 }
 
 const styles = StyleSheet.create({
@@ -49,12 +52,11 @@ const styles = StyleSheet.create({
   }
 });
 
-export default function AddDailyReportScreen({ navigation, route }: any) {
+const AddDailyReportScreen = ({ navigation, route }: any) => {
+  const { dailyReportStore: { addReport, updateReport, isLoadingSheet, sheetMessage } } = useStores();
   const [step, setStep] = useState(0);
-  const [message, setMessage] = useState<string>();
   const [data, setData] = useState<IDailyReport>(route?.params?.report || {} as IDailyReport);
-  const [loading, setLoading] = useState(false);
-  const { modalHeight, createRequest } = useContext(CoreContext);
+  const { modalHeight } = useContext(CoreContext);
   const actionSheetRef = createRef<ActionSheet>();
   const type = route?.params?.type || 'add';
 
@@ -71,19 +73,13 @@ export default function AddDailyReportScreen({ navigation, route }: any) {
   };
 
   const onComplete = (result: IDailyReport) => {
-    setLoading(true);
     actionSheetRef.current?.setModalVisible(true);
 
-    createRequest(type === 'add' ? 'addReport' : 'updateReport', result)
-      .then(({ status }) => {
-        if (status !== 'OK') {
-          setMessage('Что-то пошло не так. Отчет не добавился');
-        }
-      })
-      .catch((err) => {
-        setMessage('Что-то пошло не так. Отчет не добавился');
-      })
-      .finally(() => setLoading(false));
+    if (type === 'add') {
+      addReport(result);
+    } else {
+      updateReport(result);
+    }
   };
 
   return (
@@ -105,6 +101,7 @@ export default function AddDailyReportScreen({ navigation, route }: any) {
                 setData={setNewData}
                 onComplete={onComplete}
                 type={type}
+                navigation={navigation}
               />
             </Layout>
           );
@@ -118,20 +115,20 @@ export default function AddDailyReportScreen({ navigation, route }: any) {
         onClose={() => navigation.navigate('Root')}
       >
         <Layout style={styles.sheetContent}>
-          {loading && <Layout style={styles.loading}><Spinner /></Layout>}
-          {!loading && (
+          {isLoadingSheet && <Layout style={styles.loading}><Spinner /></Layout>}
+          {!isLoadingSheet && (
             <Layout>
               <Layout style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Icon
-                  style={{ ...styles.sheetIcon, tintColor: message ? Colors.light.error : Colors.light.success }}
-                  name={message ? 'alert-triangle' : 'checkmark-circle-2'}
+                  style={{ ...styles.sheetIcon, tintColor: sheetMessage ? Colors.light.error : Colors.light.success }}
+                  name={sheetMessage ? 'alert-triangle' : 'checkmark-circle-2'}
                 />
-                <Text status={message ? 'danger' : 'basic'}>
-                  {message || (type === 'add' ? 'Отчет успешно сохранен' : 'Отчет успешно обновлен')}
+                <Text status={sheetMessage ? 'danger' : 'basic'}>
+                  {sheetMessage || (type === 'add' ? 'Отчет успешно сохранен' : 'Отчет успешно обновлен')}
                 </Text>
               </Layout>
               <Button onPress={() => actionSheetRef.current?.setModalVisible(false)} style={styles.sheetButton}>
-                {message ? 'Закрыть' : 'Отлично'}
+                {sheetMessage ? 'Закрыть' : 'Отлично'}
               </Button>
             </Layout>
           )}
@@ -139,4 +136,6 @@ export default function AddDailyReportScreen({ navigation, route }: any) {
       </ActionSheet>
     </Layout>
   );
-}
+};
+
+export default observer(AddDailyReportScreen);

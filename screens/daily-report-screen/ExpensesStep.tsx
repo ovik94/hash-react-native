@@ -1,11 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { observer } from 'mobx-react-lite';
 import { StyleSheet, ViewStyle, StyleProp } from 'react-native';
 import { Button, Icon, Layout, Text } from '@ui-kitten/components';
-import AddExpense, { IExpense } from '../../components/expenses-list/ExpensesList';
 import ExpensesList from '../../components/expenses-list/ExpensesList';
 import Colors from '../../constants/Colors';
 import Styles from '../../constants/Styles';
-import { CoreContext } from '../../core/CoreContext';
+import useStores from '../../hooks/useStores';
 import { IStepProps } from './AddDailyReportScreen';
 
 const styles = StyleSheet.create({
@@ -21,26 +21,12 @@ const styles = StyleSheet.create({
   }
 });
 
-export default function ExpensesStep({ onComplete, onPrevious, data, type }: IStepProps) {
-  const { createRequest } = useContext(CoreContext);
-  const [expenses, setExpenses] = useState<Array<IExpense> | null>(data.expenses || null);
-  const [showAdd, setShowAdd] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const fetchExpenses = () => createRequest<Array<IExpense>>('fetchExpenses')
-    .then((res) => {
-      if (res.status === 'OK' && res.data) {
-        setExpenses(res.data);
-      }
-    })
-    .catch(() => {
-      setExpenses([]);
-    });
+const ExpensesStep = ({ onComplete, onPrevious, data, type, navigation }: IStepProps) => {
+  const { expensesStore: { fetchExpenses, expenses } } = useStores();
 
   useEffect(() => {
     if (type === 'add') {
-      setLoading(true);
-      fetchExpenses().finally(() => setLoading(false));
+      fetchExpenses();
     }
   }, []);
 
@@ -50,18 +36,8 @@ export default function ExpensesStep({ onComplete, onPrevious, data, type }: ISt
     onComplete(resultData);
   };
 
-  const onAddExpense = (newData: IExpense) => {
-    setShowAdd(false);
-
-    const newExpenses = (expenses || []).concat([newData]);
-
-    setExpenses(newExpenses);
-  };
-
-  const onDelete = (id: string) => {
-    const filteredExpenses = expenses?.filter(expense => expense.id !== id) || [];
-
-    setExpenses(filteredExpenses);
+  const onOpenAddExpense = () => {
+    navigation.navigate('AddExpense', { type: 'report' });
   };
 
   return (
@@ -69,16 +45,9 @@ export default function ExpensesStep({ onComplete, onPrevious, data, type }: ISt
       <Layout style={Styles.stepContent as StyleProp<ViewStyle>}>
         <Layout style={styles.header}>
           <Text category="h5">Расходы за день</Text>
-          <Icon name="plus" style={styles.addIcon} onPress={() => setShowAdd(true)} />
+          <Icon name="plus" style={styles.addIcon} onPress={onOpenAddExpense} />
         </Layout>
-        <ExpensesList
-          data={expenses}
-          onDelete={onDelete}
-          onAdd={onAddExpense}
-          showModal={showAdd}
-          setShowModal={setShowAdd}
-          hasDeleteAnimation
-        />
+        <ExpensesList data={data.expenses || []} type={type === 'add' ? 'reportAdd' : 'reportUpdate'} hasRefresh={false} />
       </Layout>
       <Layout style={Styles.stepButtons as StyleProp<ViewStyle>}>
         <Button onPress={onPrevious} appearance="outline" style={{ width: '45%' } as StyleProp<ViewStyle>}>
@@ -90,4 +59,6 @@ export default function ExpensesStep({ onComplete, onPrevious, data, type }: ISt
       </Layout>
     </Layout>
   );
-}
+};
+
+export default observer<IStepProps>(ExpensesStep);

@@ -6,7 +6,7 @@ import { IndexPath, Layout, Select, SelectItem } from '@ui-kitten/components';
 interface IFormSelect {
   name: string;
   label: string;
-  items: Array<{ value: string; label: string; }>
+  items: Array<{ value: any; label: string; }>
   control: any;
   defaultValue?: string;
   disabled?: boolean;
@@ -14,13 +14,15 @@ interface IFormSelect {
   required?: boolean;
   styles?: any;
   caption?: string;
+  renderItem?: (item: any) => JSX.Element;
+  renderValue?: (data: any) => JSX.Element;
 
   [otherProps: string]: any
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 16
+    marginVertical: 8
   }
 });
 
@@ -34,6 +36,8 @@ export default function FormSelect({
   defaultValue,
   items,
   caption,
+  renderItem,
+  renderValue,
   ...otherProps
 }: IFormSelect) {
   const [selectedIndex, setSelectedIndex] = useState(new IndexPath(0));
@@ -55,6 +59,14 @@ export default function FormSelect({
           }
         };
 
+        let selectValue = otherProps.placeholder;
+
+        if (renderValue && value) {
+          selectValue = renderValue(value);
+        } else if (!renderValue && value) {
+          selectValue = value;
+        }
+
         return (
           <Layout style={styles.container}>
             <Select
@@ -62,12 +74,12 @@ export default function FormSelect({
               selectedIndex={selectedIndex}
               disabled={disabled}
               onSelect={onSelect}
-              value={value || otherProps.placeholder}
+              value={selectValue}
               status={error ? 'danger' : 'basic'}
               caption={error?.message || caption}
               {...otherProps}
             >
-              {items.map(item => <SelectItem title={item.label} key={item.value} />)}
+              {items.map(item => (renderItem ? renderItem(item.value) : <SelectItem title={item.label} key={item.value} />))}
             </Select>
           </Layout>
         );

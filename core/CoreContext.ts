@@ -1,7 +1,7 @@
 import { createContext } from 'react';
-import { IMainAppOptions } from '../types';
+import { IContextOptions } from '../types';
 
-export type IContext = IMainAppOptions;
+export type IContext = IContextOptions;
 
 export const CoreContext = createContext<IContext>({} as IContext);
 export const CoreContextProvider = CoreContext.Provider;

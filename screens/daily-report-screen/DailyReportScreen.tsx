@@ -1,25 +1,14 @@
-import React, { createRef, useContext, useEffect, useState } from 'react';
+import React, { createRef, useEffect, useMemo, useState } from 'react';
+import { observer } from 'mobx-react-lite';
 import { StyleSheet } from 'react-native';
 import ActionSheet from 'react-native-actions-sheet';
 import { Button, Icon, IconProps, Layout, Spinner, Text } from '@ui-kitten/components';
-import { IExpense } from '../../components/expenses-list/ExpensesList';
 import ReportDetail from '../../components/report-detail/ReportDetail';
 import SwipeListItem from '../../components/swipe-list-item/SwipeListItem';
 import SwipeList from '../../components/swipe-list/SwipeList';
 import { formatAmountString } from '../../components/utils/formatAmountString';
-import { CoreContext } from '../../core/CoreContext';
-
-export interface IDailyReport {
-  id: string;
-  date: string;
-  adminName: string;
-  ipCash: string;
-  ipAcquiring: string;
-  oooCash: string;
-  oooAcquiring: string;
-  expenses?: Array<IExpense> | null;
-  totalSum: string;
-}
+import useStores from '../../hooks/useStores';
+import { IDailyReport } from '../../stores/DailyReportsStore';
 
 const ReloadIcon = (props: IconProps) => (
   <Icon {...props} name="sync" />
@@ -49,28 +38,13 @@ const styles = StyleSheet.create({
   }
 });
 
-export default function DailyReportScreen({ navigation }: any) {
-  const { createRequest } = useContext(CoreContext);
-  const [reports, setReports] = useState<Array<IDailyReport> | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
+const DailyReportScreen = ({ navigation }: any) => {
+  const { dailyReportStore: { fetchReports, reports, screenMessage } } = useStores();
   const [loading, setLoading] = useState(false);
   const [showReportData, setShowReportData] = useState<IDailyReport>();
   const [refreshing, setRefreshing] = useState(false);
 
   const actionSheetRef = createRef<ActionSheet>();
-
-  const fetchReports = () => createRequest<Array<IDailyReport>>('fetchReports')
-    .then(({ data, status }) => {
-      if (status === 'OK' && data) {
-        setReports(data.reverse());
-      } else {
-        setReports([]);
-      }
-    })
-    .catch((err) => {
-      setMessage('Произошла ошибка');
-      setReports([]);
-    });
 
   useEffect(() => {
     if (!reports) {
@@ -115,38 +89,49 @@ export default function DailyReportScreen({ navigation }: any) {
     });
   };
 
+  const renderReloadButton = useMemo(() => (
+    <Layout>
+      <Button
+        onPress={onReload}
+        style={styles.reloadButton}
+        appearance="outline"
+        status="info"
+        accessoryLeft={ReloadIcon}
+      >
+        Обновить
+      </Button>
+    </Layout>
+  ), []);
+
   return (
     <Layout style={styles.container}>
       {loading && <Layout style={styles.loading}><Spinner /></Layout>}
       {!loading && (
-        <>
-          <SwipeList
-            data={reports}
-            renderItem={renderItem}
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            keyExtractor={(item: IDailyReport) => item.id}
-            leftActionComponent={leftActionComponent}
-            rightActionComponent={rightActionComponent}
-            onRightAction={onRightAction}
-            onLeftAction={onLeftAction}
-          />
-          {reports?.length === 0 && (
-            <Layout>
-              <Text status="info">Отчетов пока нет</Text>
-              <Button
-                onPress={onReload}
-                style={styles.reloadButton}
-                appearance="outline"
-                status="info"
-                accessoryLeft={ReloadIcon}
-              >
-                Обновить
-              </Button>
-            </Layout>
-          )}
-          {message && <Text status="danger">{message}</Text>}
-        </>
+      <>
+        <SwipeList
+          data={reports}
+          renderItem={renderItem}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          keyExtractor={(item: IDailyReport) => item.id}
+          leftActionComponent={leftActionComponent}
+          rightActionComponent={rightActionComponent}
+          onRightAction={onRightAction}
+          onLeftAction={onLeftAction}
+        />
+        {reports?.length === 0 && (
+        <Layout>
+          <Text status="info">Отчетов пока нет</Text>
+          {renderReloadButton}
+        </Layout>
+        )}
+        {!!screenMessage && (
+          <Layout>
+            <Text status="danger">{screenMessage}</Text>
+            {renderReloadButton}
+          </Layout>
+        )}
+      </>
       )}
       <ActionSheet
         ref={actionSheetRef}
@@ -158,4 +143,6 @@ export default function DailyReportScreen({ navigation }: any) {
       </ActionSheet>
     </Layout>
   );
-}
+};
+
+export default observer(DailyReportScreen);

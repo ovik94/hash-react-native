@@ -31,7 +31,13 @@ const ExpensesStep = ({ onComplete, onPrevious, data, type, navigation }: IStepP
   }, []);
 
   const onSubmit = () => {
-    const resultData = { ...data, expenses };
+    let expensesSum = 0;
+    expenses?.forEach((item) => {
+      expensesSum += Number(item.sum);
+    });
+
+    const totalCash = Number(data.ipCash) + Number(data.oooCash) - expensesSum;
+    const resultData = { ...data, expenses, totalCash: String(totalCash) };
 
     onComplete(resultData);
   };

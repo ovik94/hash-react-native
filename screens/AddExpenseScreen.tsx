@@ -84,10 +84,7 @@ const AddExpenseScreen: FC = ({ navigation, route }: any) => {
 
   const onSubmit = (data: FormData) => {
     setLoading(true);
-    addExpense(data, () => {
-      console.log(22222222222222);
-      navigation.goBack();
-    }, type)
+    addExpense(data, () => navigation.goBack(), type)
       .catch(() => setLoading(false));
   };
 

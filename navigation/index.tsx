@@ -60,11 +60,10 @@ function BottomTabNavigator() {
           tabBarIcon: props => (
             <Icon
               name="file-text"
-              style={{ width: 32, height: 32, marginRight: 16 }}
+              style={{ width: 32, height: 32 }}
               fill={props.color}
             />
           ),
-          tabBarShowLabel: false,
           headerRight: () => <HeaderRight navigation={navigation} />
         })}
       />

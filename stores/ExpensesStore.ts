@@ -82,14 +82,9 @@ export default class ExpensesStore {
 
   public addExpense = (data: any, cb: () => void, type: IExpenseType) => {
     const newExpenses = (this.expenses || []).concat([{ ...data, id: String(uuid.v4()) }]);
-    console.log(type, 'type');
     if (type !== 'expensesList') {
       this.setExpenses(newExpenses);
-      console.log(2222);
-
       cb();
-      console.log(333);
-
       return Promise.resolve();
     }
 

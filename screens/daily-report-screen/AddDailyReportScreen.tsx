@@ -3,6 +3,7 @@ import { observer } from 'mobx-react-lite';
 import { StyleSheet } from 'react-native';
 import ActionSheet from 'react-native-actions-sheet';
 import { Button, Icon, Layout, Spinner, Text, ViewPager } from '@ui-kitten/components';
+import { formatAmountString } from '../../components/utils/formatAmountString';
 import Colors from '../../constants/Colors';
 import { CoreContext } from '../../core/CoreContext';
 import useStores from '../../hooks/useStores';
@@ -48,7 +49,7 @@ const styles = StyleSheet.create({
   sheetIcon: {
     width: 32,
     height: 32,
-    marginHorizontal: 8
+    marginRight: 8
   }
 });
 
@@ -74,6 +75,7 @@ const AddDailyReportScreen = ({ navigation, route }: any) => {
 
   const onComplete = (result: IDailyReport) => {
     actionSheetRef.current?.setModalVisible(true);
+    setNewData(result);
 
     if (type === 'add') {
       addReport(result);
@@ -127,6 +129,11 @@ const AddDailyReportScreen = ({ navigation, route }: any) => {
                   {sheetMessage || (type === 'add' ? 'Отчет успешно сохранен' : 'Отчет успешно обновлен')}
                 </Text>
               </Layout>
+              {!sheetMessage && (
+                <Text status="info" style={{ marginTop: 16 }}>
+                  {`Сдать наличных: ${formatAmountString(data.totalCash)}`}
+                </Text>
+              )}
               <Button onPress={() => actionSheetRef.current?.setModalVisible(false)} style={styles.sheetButton}>
                 {sheetMessage ? 'Закрыть' : 'Отлично'}
               </Button>

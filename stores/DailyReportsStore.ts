@@ -12,6 +12,7 @@ export interface IDailyReport {
   oooAcquiring: string;
   expenses?: Array<IExpense> | null;
   totalSum: string;
+  totalCash: string;
 }
 
 export default class DailyReportsStore {
@@ -60,12 +61,13 @@ export default class DailyReportsStore {
       this.setScreenMessage('Произошла ошибка при загрузке отчетов');
     });
 
-  public addReport = (data: IDailyReport) => {
+  public addReport = (reportData: IDailyReport) => {
     this.setLoadingSheet(true);
     return this.rootStore
-      .createRequest('addReport', data)
-      .then(({ status }) => {
+      .createRequest('addReport', reportData)
+      .then(({ status, data }) => {
         if (status === 'OK') {
+          this.setReports([data].concat(this.reports || []));
           this.setSheetMessage('');
         } else {
           this.setSheetMessage('Что-то пошло не так. Отчет не добавился');
@@ -77,12 +79,15 @@ export default class DailyReportsStore {
       .finally(() => this.setLoadingSheet(false));
   };
 
-  public updateReport = (data: IDailyReport) => {
+  public updateReport = (updateData: IDailyReport) => {
     this.setLoadingSheet(true);
     return this.rootStore
-      .createRequest('updateReport', data)
-      .then(({ status }) => {
+      .createRequest('updateReport', updateData)
+      .then(({ status, data }) => {
         if (status === 'OK') {
+          const newReports = (this.reports || [])
+            .map(report => (report.id === data.id ? { ...report, ...data } : report));
+          this.setReports(newReports);
           this.setSheetMessage('');
         } else {
           this.setSheetMessage('Что-то пошло не так. Отчет не обновился');

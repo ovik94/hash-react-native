@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { StyleSheet } from 'react-native';
 import { Divider, Layout, Text } from '@ui-kitten/components';
-import { IDailyReport } from '../../screens/daily-report-screen/DailyReportScreen';
+import { IDailyReport } from '../../stores/DailyReportsStore';
 import { formatAmountString } from '../utils/formatAmountString';
 
 interface IReportDetail {
@@ -68,6 +68,11 @@ const ReportDetail: FC<IReportDetail> = ({ data }) => {
           {renderItem('Наличные', formatAmountString(data?.oooCash))}
           {renderItem('Эквайринг', formatAmountString(data?.oooAcquiring))}
         </Layout>
+      </Layout>
+      <Divider style={styles.divider} />
+
+      <Layout>
+        {renderItem('Сдано наличных', formatAmountString(data?.totalCash), true)}
       </Layout>
       <Divider style={styles.divider} />
 

@@ -6,9 +6,7 @@
     "start": "expo start --localhost --android",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web",
-    "eject": "expo eject",
-    "test": "jest --watchAll"
+    "build-android": "eas build -p android --profile preview"
   },
   "jest": {
     "preset": "jest-expo"

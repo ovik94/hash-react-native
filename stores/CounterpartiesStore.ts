@@ -54,18 +54,6 @@ export default class CounterpartiesStore {
     this.roleCounterparties = counterparties;
   };
 
-  public fetchCounterparties = () => {
-    this.setLoading(true);
-    return this.rootStore
-      .createRequest<ICounterparties>('fetchCounterparties')
-      .then(({ status, data }) => {
-        if (status === 'OK' && data) {
-          this.setCounterparties(data);
-        }
-      })
-      .finally(() => this.setLoading(false));
-  };
-
   public fetchRoleCounterparties = (role: IRole) => {
     this.setLoading(true);
     return this.rootStore

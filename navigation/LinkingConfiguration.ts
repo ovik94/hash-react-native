@@ -19,14 +19,14 @@ const linking: LinkingOptions<RootStackParamList> = {
               DailyReportScreen: 'dailyReport'
             }
           },
-          TabTwo: {
+          Contractors: {
             screens: {
-              TabTwoScreen: 'two'
+              ContractorsScreen: 'contractors'
             }
           }
         }
       },
-      AddDailyReport: 'addDailyReport',
+      AddDailyReport: 'AddDailyReport',
       NotFound: '*'
     }
   }

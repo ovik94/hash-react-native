@@ -1,6 +1,7 @@
 /* eslint-disable import/no-cycle */
 import { makeObservable, action, observable } from 'mobx';
 import RequestFactory from '../core/request-factory';
+import ContractorsStore from './ContractorsStore';
 import CounterpartiesStore from './CounterpartiesStore';
 import DailyReportsStore from './DailyReportsStore';
 import ExpensesStore from './ExpensesStore';
@@ -20,10 +21,13 @@ export class RootStore {
 
   counterpartiesStore: CounterpartiesStore;
 
+  contractorsStore: ContractorsStore;
+
   constructor() {
     this.dailyReportStore = new DailyReportsStore(this);
     this.expensesStore = new ExpensesStore(this);
     this.counterpartiesStore = new CounterpartiesStore(this);
+    this.contractorsStore = new ContractorsStore(this);
 
     makeObservable(this, { isLoading: observable, setLoading: action });
   }

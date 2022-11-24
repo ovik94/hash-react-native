@@ -14,6 +14,7 @@ import RequestFactory from '../core/request-factory';
 import RequestConfigList from '../core/RequestConfigList';
 import { StoreContextProvider } from '../core/StoreContext';
 import AddExpenseScreen from '../screens/AddExpenseScreen';
+import ContractorsScreen from '../screens/ContractorsScreen';
 import AddDailyReportScreen from '../screens/daily-report-screen/AddDailyReportScreen';
 import DailyReportScreen from '../screens/daily-report-screen/DailyReportScreen';
 import HeaderRight from '../screens/daily-report-screen/HeaderRight';
@@ -65,6 +66,20 @@ function BottomTabNavigator() {
             />
           ),
           headerRight: () => <HeaderRight navigation={navigation} />
+        })}
+      />
+      <BottomTab.Screen
+        name="Contractors"
+        component={ContractorsScreen}
+        options={({ navigation }: RootTabScreenProps<'Contractors'>) => ({
+          title: 'Поставщики',
+          tabBarIcon: props => (
+            <Icon
+              name="people-outline"
+              style={{ width: 32, height: 32 }}
+              fill={props.color}
+            />
+          )
         })}
       />
     </BottomTab.Navigator>

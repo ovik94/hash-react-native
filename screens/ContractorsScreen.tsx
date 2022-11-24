@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { observer } from 'mobx-react-lite';
 import { StyleSheet, View, Linking } from 'react-native';
 import { Icon, Layout, Spinner } from '@ui-kitten/components';
 import SwipeListItem from '../components/swipe-list-item/SwipeListItem';
@@ -30,7 +31,7 @@ const styles = StyleSheet.create({
   }
 });
 
-export default function ContractorsScreen() {
+const ContractorsScreen = () => {
   const { contractorsStore: { fetchContractors, contractors, isLoading } } = useStores();
   const [refreshing, setRefreshing] = useState(false);
 
@@ -77,4 +78,6 @@ export default function ContractorsScreen() {
       )}
     </View>
   );
-}
+};
+
+export default observer(ContractorsScreen);

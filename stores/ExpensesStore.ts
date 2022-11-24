@@ -81,7 +81,9 @@ export default class ExpensesStore {
   };
 
   public addExpense = (data: any, cb: () => void, type: IExpenseType) => {
-    const newExpenses = (this.expenses || []).concat([{ ...data, id: String(uuid.v4()) }]);
+    const id = String(uuid.v4());
+    const newExpenses = (this.expenses || []).concat([{ ...data, id }]);
+
     if (type !== 'expensesList') {
       this.setExpenses(newExpenses);
       cb();
@@ -89,7 +91,7 @@ export default class ExpensesStore {
     }
 
     return this.rootStore
-      .createRequest('addExpense', { ...data, id: String(uuid.v4()) })
+      .createRequest('addExpense', { ...data, id })
       .then(({ status }) => {
         if (status === 'OK') {
           this.setExpenses(newExpenses);

@@ -15,6 +15,7 @@ import RequestConfigList from '../core/RequestConfigList';
 import { StoreContextProvider } from '../core/StoreContext';
 import AddExpenseScreen from '../screens/AddExpenseScreen';
 import ContractorsScreen from '../screens/ContractorsScreen';
+import RevenueScreen from '../screens/RevenueScreen';
 import AddDailyReportScreen from '../screens/daily-report-screen/AddDailyReportScreen';
 import DailyReportScreen from '../screens/daily-report-screen/DailyReportScreen';
 import HeaderRight from '../screens/daily-report-screen/HeaderRight';
@@ -76,6 +77,20 @@ function BottomTabNavigator() {
           tabBarIcon: props => (
             <Icon
               name="people-outline"
+              style={{ width: 32, height: 32 }}
+              fill={props.color}
+            />
+          )
+        })}
+      />
+      <BottomTab.Screen
+        name="Revenue"
+        component={RevenueScreen}
+        options={({ navigation }: RootTabScreenProps<'Revenue'>) => ({
+          title: 'Выручка',
+          tabBarIcon: props => (
+            <Icon
+              name="pie-chart-outline"
               style={{ width: 32, height: 32 }}
               fill={props.color}
             />

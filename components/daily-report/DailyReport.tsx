@@ -1,4 +1,4 @@
-import React, { createRef, useEffect, useMemo, useState } from 'react';
+import React, { createRef, FC, useEffect, useMemo, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { StyleSheet } from 'react-native';
 import ActionSheet from 'react-native-actions-sheet';
@@ -39,38 +39,23 @@ const styles = StyleSheet.create({
   }
 });
 
-const DailyReportScreen = ({ navigation }: any) => {
-  const { dailyReportStore: { fetchReports, reports, screenMessage } } = useStores();
+interface IDailyReportProps {
+  reports?: Array<IDailyReport>,
+  errorMessage?: string,
+  fetchReports?: () => Promise<void>,
+  navigation: any
+}
+
+const DailyReport: FC<IDailyReportProps> = ({
+  reports = [],
+  errorMessage = '',
+  fetchReports,
+  navigation,
+}) => {
   const [loading, setLoading] = useState(false);
   const [showReportData, setShowReportData] = useState<IDailyReport>();
   const [refreshing, setRefreshing] = useState(false);
-  const [reportsData, setReportsData] = useState<Array<IDailyReport>>([]);
   const actionSheetRef = createRef<ActionSheet>();
-
-  const setReports = () => {
-    const filteredReports = (reports || []).filter(report => {
-      const dateArray = report.date.split('.');
-      const day = Number(dateArray[0]) + 1;
-      const month = Number(dateArray[1]) - 1;
-      const year = Number(dateArray[2]);
-      const transformDate = new Date(year, month, day);
-      return isThisMonth(transformDate);
-    });
-    setReportsData(filteredReports);
-  }
-
-  useEffect(() => {
-    if (reports) {
-      setReports();
-    }
-
-    if (!reports) {
-      setLoading(true);
-      fetchReports().finally(() => {
-        setLoading(false);
-      });
-    }
-  }, [reports]);
 
   const renderItem = ({ item }: { item: IDailyReport }) => (
     <SwipeListItem
@@ -82,13 +67,17 @@ const DailyReportScreen = ({ navigation }: any) => {
   );
 
   const onRefresh = () => {
-    setRefreshing(true);
-    fetchReports().then(() => setRefreshing(false));
+    if (fetchReports) {
+      setRefreshing(true);
+      fetchReports().then(() => setRefreshing(false));
+    }
   };
 
   const onReload = () => {
-    setLoading(true);
-    fetchReports().then(() => setLoading(false));
+    if (fetchReports) {
+      setLoading(true);
+      fetchReports().then(() => setLoading(false));
+    }
   };
 
   const rightActionComponent = <Icon style={styles.swipeListIcon} name="eye"/>;
@@ -96,14 +85,14 @@ const DailyReportScreen = ({ navigation }: any) => {
 
   const onRightAction = (id: string) => {
     actionSheetRef.current?.setModalVisible(true);
-    const report = reportsData?.find(item => item.id === id);
+    const report = reports?.find(item => item.id === id);
 
     setShowReportData(report);
   };
 
   const onLeftAction = (id: string) => {
     navigation.navigate('AddDailyReport', {
-      report: reportsData?.find(item => item.id === id),
+      report: reports?.find(item => item.id === id),
       type: 'update'
     });
   };
@@ -123,12 +112,12 @@ const DailyReportScreen = ({ navigation }: any) => {
   ), []);
 
   return (
-    <Layout style={styles.container}>
+    <Layout>
       {loading && <Layout style={styles.loading}><Spinner/></Layout>}
       {!loading && (
         <>
           <SwipeList
-            data={reportsData}
+            data={reports}
             renderItem={renderItem}
             refreshing={refreshing}
             onRefresh={onRefresh}
@@ -138,15 +127,15 @@ const DailyReportScreen = ({ navigation }: any) => {
             onRightAction={onRightAction}
             onLeftAction={onLeftAction}
           />
-          {reportsData?.length === 0 && (
+          {reports?.length === 0 && (
             <Layout>
               <Text status="info">Отчетов пока нет</Text>
               {renderReloadButton}
             </Layout>
           )}
-          {!!screenMessage && (
+          {!!errorMessage && (
             <Layout>
-              <Text status="danger">{screenMessage}</Text>
+              <Text status="danger">{errorMessage}</Text>
               {renderReloadButton}
             </Layout>
           )}
@@ -164,4 +153,4 @@ const DailyReportScreen = ({ navigation }: any) => {
   );
 };
 
-export default observer(DailyReportScreen);
+export default DailyReport;

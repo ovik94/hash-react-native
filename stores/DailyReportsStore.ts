@@ -1,6 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 import { IExpense } from './ExpensesStore';
 import { RootStore } from './RootStore';
+import { isThisMonth } from 'date-fns';
 
 export interface IDailyReport {
   id: string;

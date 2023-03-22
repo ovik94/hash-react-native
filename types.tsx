@@ -30,6 +30,7 @@ export type RootTabParamList = {
   DailyReport: undefined;
   AddDailyReport: undefined;
   Contractors: undefined;
+  Revenue: undefined;
 };
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> = CompositeScreenProps<

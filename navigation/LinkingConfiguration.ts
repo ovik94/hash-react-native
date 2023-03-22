@@ -23,6 +23,11 @@ const linking: LinkingOptions<RootStackParamList> = {
             screens: {
               ContractorsScreen: 'contractors'
             }
+          },
+          Revenue: {
+            screens: {
+              RevenueScreen: 'revenue'
+            }
           }
         }
       },

@@ -4,13 +4,13 @@ import { StyleSheet, View } from 'react-native';
 import { Button, Layout, Spinner, Text } from '@ui-kitten/components';
 import useStores from '../hooks/useStores';
 import { useForm } from "react-hook-form";
-import FormSelect from "../components/form-controls/FormSelect";
 import { IDailyReport } from "../stores/DailyReportsStore";
-import getYear from 'date-fns/getYear';
-import { getMonth } from "date-fns";
+import { subMonths, lastDayOfMonth, startOfMonth } from "date-fns";
 import { PieChart } from "react-native-chart-kit";
 import { Dimensions } from "react-native";
 import { formatAmountString } from "../components/utils/formatAmountString";
+import FormDatePicker from "../components/form-controls/FormDatePicker";
+import dateFormatter from "../components/utils/dateFormatter";
 
 const styles = StyleSheet.create({
   container: {
@@ -37,85 +37,60 @@ const styles = StyleSheet.create({
 });
 
 type FormData = {
-  month: number;
-  year: number;
+  from: Date;
+  to: Date;
 };
 
-const SelectMonthOptions = [
-  { label: 'Январь', value: 1 },
-  { label: 'Февраль', value: 2 },
-  { label: 'Март', value: 3 },
-  { label: 'Апрель', value: 4 },
-  { label: 'Май', value: 5 },
-  { label: 'Июнь', value: 6 },
-  { label: 'Июль', value: 7 },
-  { label: 'Август', value: 8 },
-  { label: 'Сентябрь', value: 9 },
-  { label: 'Октябрь', value: 10 },
-  { label: 'Ноябрь', value: 11 },
-  { label: 'Декабрь', value: 12 }
-];
-
-const SelectYearOptions = [
-  { label: '2023', value: 2023 }
-]
-
 const RevenueScreen = () => {
-  const { dailyReportStore: { fetchReports, reports } } = useStores();
+  const { dailyReportStore: { fetchReports } } = useStores();
   const [loading, setLoading] = useState(false);
-  const [chartData, setChartData] = useState<Array<IDailyReport>>([]);
+  const [reports, setReports] = useState<Array<IDailyReport>>([]);
+  const [chartParams, setChartParams] = useState<{ from?: string; to?: string; } | null>(null);
   const [ipAcquiringSum, setIpAcquiringSum] = useState(0);
   const [oooAcquiringSum, setOooAcquiringSum] = useState(0);
   const [ipCashSum, setIpCashSum] = useState(0);
   const [oooCashSum, setOooCashSum] = useState(0);
   const [totalSum, setTotalSum] = useState(0);
 
-  const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
-    defaultValues: {
-      month: 3,
-      year: 2023
-    }
-  });
+  const { control, handleSubmit, formState: { errors }, setValue } = useForm<FormData>();
+
+  const screenWidth = Dimensions.get("window").width;
 
   useEffect(() => {
-    if (!reports) {
+    if (chartParams) {
       setLoading(true);
-      fetchReports().finally(() => setLoading(false));
+      fetchReports(chartParams).then((res) => {
+        setReports(res);
+        setLoading(false)
+      });
     }
-  }, [reports]);
-
-  const transformedDate = (date: string) => {
-    const dateArray = date.split('.');
-    const day = Number(dateArray[0]) + 1;
-    const month = Number(dateArray[1]) - 1;
-    const year = Number(dateArray[2]);
-    return new Date(year, month, day);
-  };
+  }, [chartParams]);
 
   const onSubmit = (newData: FormData) => {
-    const chartData = (reports || []).filter(item => {
-      const year = getYear(transformedDate(item.date));
-      return year === newData.year;
-    }).filter(item => {
-      const month = getMonth(transformedDate(item.date));
-      return month + 1 === newData.month;
-    });
+    let params: { from?: string; to?: string; } = {};
 
-    setChartData(chartData);
+    if (newData.to) {
+      params.to = dateFormatter(newData.to);
+    }
+
+    if (newData.from) {
+      params.from = dateFormatter(newData.from);
+    }
+    setChartParams(!Object.keys(params).length ? null : params);
   };
 
   useEffect(() => {
-    const ipAcquiring = chartData.reduce((sum, current) => sum + Number(current.ipAcquiring), 0);
-    const oooAcquiring = chartData.reduce((sum, current) => sum + Number(current.oooAcquiring), 0);
-    const ipCash = chartData.reduce((sum, current) => sum + Number(current.ipCash), 0);
-    const oooCash = chartData.reduce((sum, current) => sum + Number(current.oooCash), 0);
-    const total = chartData.reduce((sum, current) => sum + Number(current.totalSum), 0);
+    const ipAcquiring = reports.reduce((sum, current) => sum + Number(current.ipAcquiring), 0);
+    const oooAcquiring = reports.reduce((sum, current) => sum + Number(current.oooAcquiring), 0);
+    const ipCash = reports.reduce((sum, current) => sum + Number(current.ipCash), 0);
+    const oooCash = reports.reduce((sum, current) => sum + Number(current.oooCash), 0);
+    const total = reports.reduce((sum, current) => sum + Number(current.totalSum), 0);
     setIpAcquiringSum(Math.floor(ipAcquiring));
     setOooAcquiringSum(Math.floor(oooAcquiring));
     setIpCashSum(Math.floor(ipCash));
     setOooCashSum(Math.floor(oooCash));
     setTotalSum(Math.floor(total));
-  }, [chartData]);
+  }, [reports]);
 
   const peiData = useMemo(() => {
     return [
@@ -150,53 +125,82 @@ const RevenueScreen = () => {
     ]
   }, [ipAcquiringSum, oooAcquiringSum, ipCashSum, oooCashSum]);
 
-  const screenWidth = Dimensions.get("window").width;
+  useEffect(() => {
+    onSetCurrentMonth();
+  }, []);
+
+  const onSetPrevMonth = () => {
+    const start = startOfMonth(subMonths(new Date(), 1));
+    const end = lastDayOfMonth(subMonths(new Date(), 1));
+
+    setValue('from', start);
+    setValue('to', end);
+  };
+
+  const onSetCurrentMonth = () => {
+    const start = startOfMonth(new Date());
+    const end = lastDayOfMonth(new Date());
+
+    setValue('from', start);
+    setValue('to', end);
+  }
 
   return (
     <View style={styles.container}>
-      {loading && <Layout style={styles.loading}><Spinner/></Layout>}
-      {!loading && (
-        <Layout>
-          <FormSelect
-            items={SelectMonthOptions}
-            name="month"
-            label="Месяц"
-            placeholder="Месяц"
-            error={errors.month}
-            control={control}
-            required
-          />
-          <FormSelect
-            items={SelectYearOptions}
-            name="year"
-            label="Год"
-            placeholder="Год"
-            error={errors.year}
-            control={control}
-            required
-          />
+      <Layout>
+        <FormDatePicker
+          name="from"
+          label="Начало периода"
+          error={errors.from}
+          control={control}
+          required
+        />
+        <FormDatePicker
+          name="to"
+          label="Конец периода"
+          error={errors.to}
+          control={control}
+          required
+        />
 
-          <Button onPress={handleSubmit(onSubmit)} style={styles.button}>
-            Рссчитать
+        <Layout style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Button onPress={onSetPrevMonth} appearance='outline' size='small' status='info'>
+            Прошлый месяц
           </Button>
-
-          <Text category="h5" style={{ fontWeight: 'bold', marginBottom: 16 }}>{`Общая выручка: ${formatAmountString(String(totalSum))}`}</Text>
-
-          <PieChart
-            data={peiData}
-            width={screenWidth}
-            height={200}
-            chartConfig={{
-              color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-            }}
-            accessor={"population"}
-            backgroundColor={"transparent"}
-            paddingLeft={"-20"}
-            center={[15, 10]}
-            absolute
-          />
+          <Button onPress={onSetCurrentMonth} appearance='outline' size='small' status='info'>
+            Текущий месяц
+          </Button>
         </Layout>
-      )}
+        <Button onPress={handleSubmit(onSubmit)} style={styles.button}>
+          Рссчитать
+        </Button>
+
+        {loading && <Layout style={styles.loading}><Spinner/></Layout>}
+        {!loading && (
+          <Layout>
+            <Text category="h5" style={{
+              fontWeight: 'bold',
+              marginBottom: 16
+            }}>
+              {`Общая выручка: ${formatAmountString(String(totalSum))}`}
+            </Text>
+
+            <PieChart
+              data={peiData}
+              width={screenWidth}
+              height={200}
+              chartConfig={{
+                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+              }}
+              accessor={"population"}
+              backgroundColor={"transparent"}
+              paddingLeft={"-20"}
+              center={[15, 10]}
+              absolute
+            />
+          </Layout>
+        )}
+      </Layout>
     </View>
   );
 };

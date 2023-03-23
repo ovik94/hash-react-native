@@ -9,7 +9,8 @@ import SwipeList from '../../components/swipe-list/SwipeList';
 import { formatAmountString } from '../../components/utils/formatAmountString';
 import useStores from '../../hooks/useStores';
 import { IDailyReport } from '../../stores/DailyReportsStore';
-import { isThisMonth } from "date-fns";
+import { isThisMonth, startOfMonth, lastDayOfMonth, addDays } from "date-fns";
+import dateFormatter from "../../components/utils/dateFormatter";
 
 const ReloadIcon = (props: IconProps) => (
   <Icon {...props} name="sync"/>
@@ -46,31 +47,24 @@ const DailyReportScreen = ({ navigation }: any) => {
   const [refreshing, setRefreshing] = useState(false);
   const [reportsData, setReportsData] = useState<Array<IDailyReport>>([]);
   const actionSheetRef = createRef<ActionSheet>();
-
-  const setReports = () => {
-    const filteredReports = (reports || []).filter(report => {
-      const dateArray = report.date.split('.');
-      const day = Number(dateArray[0]) + 1;
-      const month = Number(dateArray[1]) - 1;
-      const year = Number(dateArray[2]);
-      const transformDate = new Date(year, month, day);
-      return isThisMonth(transformDate);
-    });
-    setReportsData(filteredReports);
-  }
+  const [reportsParams, setReportsParams] = useState<{ from?: string, to?: string }>();
 
   useEffect(() => {
-    if (reports) {
-      setReports();
-    }
+    const from = dateFormatter(startOfMonth(new Date()));
+    const to = dateFormatter(lastDayOfMonth(new Date()));
 
-    if (!reports) {
+    setReportsParams({ from, to });
+  }, []);
+
+  useEffect(() => {
+    if (reportsParams) {
       setLoading(true);
-      fetchReports().finally(() => {
-        setLoading(false);
+      fetchReports(reportsParams).then((res) => {
+        setReportsData(res);
+        setLoading(false)
       });
     }
-  }, [reports]);
+  }, [reportsParams]);
 
   const renderItem = ({ item }: { item: IDailyReport }) => (
     <SwipeListItem
@@ -83,12 +77,18 @@ const DailyReportScreen = ({ navigation }: any) => {
 
   const onRefresh = () => {
     setRefreshing(true);
-    fetchReports().then(() => setRefreshing(false));
+    fetchReports(reportsParams).then((res) => {
+      setReportsData(res);
+      setRefreshing(false)
+    });
   };
 
   const onReload = () => {
     setLoading(true);
-    fetchReports().then(() => setLoading(false));
+    fetchReports(reportsParams).then((res) => {
+      setReportsData(res);
+      setLoading(false)
+    });
   };
 
   const rightActionComponent = <Icon style={styles.swipeListIcon} name="eye"/>;

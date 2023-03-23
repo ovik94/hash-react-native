@@ -40,7 +40,7 @@ const SwipeListItem = ({ iconComponent, title, subtitle, primaryText, iconName }
     <Layout style={styles.inner}>
       {icon}
       <Layout style={styles.info}>
-        <Text category="h6">{title}</Text>
+        <Text category="h6" style={{ fontWeight: '400' }}>{title}</Text>
         {subtitle && <Text category="label">{subtitle}</Text>}
       </Layout>
       <Text category="p2" style={{ fontWeight: 'bold' }}>{primaryText}</Text>

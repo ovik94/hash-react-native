@@ -48,18 +48,22 @@ export default class DailyReportsStore {
     this.sheetMessage = message;
   };
 
-  public fetchReports = () => this.rootStore
-    .createRequest<Array<IDailyReport>>('fetchReports')
+  public fetchReports = (params?: { from?: string, to?: string }): Promise<Array<IDailyReport>> => this.rootStore
+    .createRequest<Array<IDailyReport>>('fetchReports', undefined, params)
     .then(({ status, data }) => {
+      let result: Array<IDailyReport> = [];
       if (status === 'OK' && data) {
-        this.setReports(data.reverse());
-      } else {
-        this.setReports([]);
+        result = data.reverse();
+      }
+      if (!params) {
+        this.setReports(result);
       }
       this.setScreenMessage('');
+      return result;
     })
     .catch(() => {
       this.setScreenMessage('Произошла ошибка при загрузке отчетов');
+      return [];
     });
 
   public addReport = (reportData: IDailyReport) => {

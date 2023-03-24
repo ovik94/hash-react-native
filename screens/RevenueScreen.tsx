@@ -1,12 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { observer } from 'mobx-react-lite';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, ScrollView } from 'react-native';
 import { Button, Layout, Spinner, Text } from '@ui-kitten/components';
 import useStores from '../hooks/useStores';
 import { useForm } from "react-hook-form";
 import { IDailyReport } from "../stores/DailyReportsStore";
 import { subMonths, lastDayOfMonth, startOfMonth } from "date-fns";
-import { PieChart } from "react-native-chart-kit";
+import { BarChart } from "react-native-chart-kit";
 import { Dimensions } from "react-native";
 import { formatAmountString } from "../components/utils/formatAmountString";
 import FormDatePicker from "../components/form-controls/FormDatePicker";
@@ -92,37 +92,19 @@ const RevenueScreen = () => {
     setTotalSum(Math.floor(total));
   }, [reports]);
 
-  const peiData = useMemo(() => {
-    return [
-      {
-        name: "ИП Эквайринг",
-        population: ipAcquiringSum,
-        color: "#bf3d3d",
-        legendFontColor: "#7F7F7F",
-        legendFontSize: 11
-      },
-      {
-        name: "ООО Эквайринг",
-        population: oooAcquiringSum,
-        color: "#117860",
-        legendFontColor: "#7F7F7F",
-        legendFontSize: 11
-      },
-      {
-        name: "ИП Наличные",
-        population: ipCashSum,
-        color: "#eb8686",
-        legendFontColor: "#7F7F7F",
-        legendFontSize: 11
-      },
-      {
-        name: "ООО Наличные",
-        population: oooCashSum,
-        color: "#98d9ca",
-        legendFontColor: "#7F7F7F",
-        legendFontSize: 11
-      }
-    ]
+  const barData = useMemo(() => {
+    return {
+      labels: ['ИП.Экв', 'ИП.Нал', 'ООО.Экв', 'ООО.Нал'],
+      datasets: [{
+        data: [ipAcquiringSum, ipCashSum, oooAcquiringSum, oooCashSum],
+        colors: [
+          (opacity = 1) => `rgba(179, 68, 68, ${opacity})`,
+          (opacity = 1) => `rgba(179, 68, 68, ${opacity})`,
+          (opacity = 1) => `rgba(48, 130, 115, ${opacity})`,
+          (opacity = 1) => `rgba(48, 130, 115, ${opacity})`
+        ]
+      }]
+    }
   }, [ipAcquiringSum, oooAcquiringSum, ipCashSum, oooCashSum]);
 
   useEffect(() => {
@@ -146,7 +128,7 @@ const RevenueScreen = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Layout>
         <FormDatePicker
           name="from"
@@ -176,7 +158,7 @@ const RevenueScreen = () => {
         </Button>
 
         {loading && <Layout style={styles.loading}><Spinner/></Layout>}
-        {!loading && (
+        {!loading && chartParams && (
           <Layout>
             <Text category="h5" style={{
               fontWeight: 'bold',
@@ -185,23 +167,31 @@ const RevenueScreen = () => {
               {`Общая выручка: ${formatAmountString(String(totalSum))}`}
             </Text>
 
-            <PieChart
-              data={peiData}
-              width={screenWidth}
+            <BarChart
+              data={barData}
+              width={screenWidth - 24}
               height={200}
+              yAxisLabel=""
+              yAxisSuffix=" ₽"
+              fromZero
+              showValuesOnTopOfBars
+              segments={3}
+              withCustomBarColorFromData
               chartConfig={{
-                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                backgroundColor: '#fff',
+                backgroundGradientFrom: '#fff',
+                backgroundGradientTo: '#fff',
+                decimalPlaces: 0,
+                color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
               }}
-              accessor={"population"}
-              backgroundColor={"transparent"}
-              paddingLeft={"-20"}
-              center={[15, 10]}
-              absolute
+              style={{
+                marginVertical: 32,
+              }}
             />
           </Layout>
         )}
       </Layout>
-    </View>
+    </ScrollView>
   );
 };
 

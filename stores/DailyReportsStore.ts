@@ -11,6 +11,7 @@ export interface IDailyReport {
   ipAcquiring: string;
   oooCash: string;
   oooAcquiring: string;
+  yandex: string;
   expenses?: Array<IExpense> | null;
   totalSum: string;
   totalCash: string;

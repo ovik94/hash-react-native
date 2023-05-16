@@ -41,7 +41,7 @@ const ReportDetail: FC<IReportDetail> = ({ data }) => {
   const renderItem = (label: string, value: string, bold = false) => (
     <Layout style={styles.item}>
       <Text category="label" style={styles.label}>{label}</Text>
-      <Text category="h6" style={bold && { fontWeight: 'bold' }}>{value}</Text>
+      <Text category="p1" style={bold && { fontWeight: 'bold' }}>{value}</Text>
     </Layout>
   );
 
@@ -54,7 +54,7 @@ const ReportDetail: FC<IReportDetail> = ({ data }) => {
       </Layout>
       <Divider style={styles.divider} />
       <Layout>
-        <Text category="h6">ИП Багдасарян</Text>
+        <Text category="label">ИП Багдасарян</Text>
         <Layout style={styles.header}>
           {renderItem('Наличные', formatAmountString(data?.ipCash))}
           {renderItem('Эквайринг', formatAmountString(data?.ipAcquiring))}
@@ -63,10 +63,18 @@ const ReportDetail: FC<IReportDetail> = ({ data }) => {
       <Divider style={styles.divider} />
 
       <Layout>
-        <Text category="h6">ООО ХашЛаваш</Text>
+        <Text category="label">ООО ХашЛаваш</Text>
         <Layout style={styles.header}>
           {renderItem('Наличные', formatAmountString(data?.oooCash))}
           {renderItem('Эквайринг', formatAmountString(data?.oooAcquiring))}
+        </Layout>
+      </Layout>
+      <Divider style={styles.divider} />
+
+      <Layout>
+        <Text category="label">Яндекс.Еда и Деливери</Text>
+        <Layout style={styles.header}>
+          {renderItem('Выручка', formatAmountString(data?.yandex))}
         </Layout>
       </Layout>
       <Divider style={styles.divider} />
@@ -77,7 +85,7 @@ const ReportDetail: FC<IReportDetail> = ({ data }) => {
       <Divider style={styles.divider} />
 
       <Layout>
-        <Text category="h6" style={{ marginBottom: 16 }}>Расходные операции</Text>
+        <Text category="label" style={{ marginBottom: 16 }}>Расходные операции</Text>
         {data?.expenses?.length && data.expenses.map(item => (
           <Layout key={item.id} style={{ width: '100%', marginBottom: 8 }}>
             <Layout style={{ flexDirection: 'row', justifyContent: 'space-between' }}>

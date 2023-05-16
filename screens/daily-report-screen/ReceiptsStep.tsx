@@ -13,16 +13,24 @@ type FormData = {
   oooCash: string;
   oooAcquiring: string;
   totalSum: string;
+  yandex: string;
 };
 
 export default function ReceiptsStep({ onNext, onPrevious, data, setData }: IStepProps) {
   const { control, handleSubmit, formState: { errors }, setValue } = useForm<FormData>({
     defaultValues: {
-      ipCash: data?.ipCash || '0',
-      ipAcquiring: data?.ipAcquiring || '0',
-      oooCash: data?.oooCash || '0',
-      oooAcquiring: data?.oooAcquiring || '0',
-      totalSum: String(Number(data?.ipCash) + Number(data?.ipAcquiring) + Number(data?.oooCash) + Number(data?.oooAcquiring)) || '0'
+      ipCash: data?.ipCash || undefined,
+      ipAcquiring: data?.ipAcquiring || undefined,
+      oooCash: data?.oooCash || undefined,
+      oooAcquiring: data?.oooAcquiring || undefined,
+      yandex: data?.yandex || undefined,
+      totalSum: String(
+        Number(data?.ipCash || '0') +
+        Number(data?.ipAcquiring || '0') +
+        Number(data?.oooCash || '0') +
+        Number(data?.oooAcquiring || '0') +
+        Number(data?.yandex || '0')
+      ) || '0'
     }
   });
 
@@ -35,12 +43,17 @@ export default function ReceiptsStep({ onNext, onPrevious, data, setData }: ISte
   const ipAcquiringValue = useWatch({ control, name: 'ipAcquiring' });
   const oooCashValue = useWatch({ control, name: 'oooCash' });
   const oooAcquiringValue = useWatch({ control, name: 'oooAcquiring' });
+  const yandexValue = useWatch({ control, name: 'yandex' });
   const totalSumValue = useWatch({ control, name: 'totalSum' });
 
   useEffect(() => {
-    const totalSum = Number(ipCashValue) + Number(ipAcquiringValue) + Number(oooCashValue) + Number(oooAcquiringValue);
-    setValue('totalSum', String(totalSum));
-  }, [ipCashValue, ipAcquiringValue, oooCashValue, oooAcquiringValue]);
+    const totalSum = Number(ipCashValue || '0') +
+      Number(ipAcquiringValue || '0') +
+      Number(oooCashValue || '0') +
+      Number(oooAcquiringValue || '0') +
+      Number(yandexValue || '0');
+    setValue('totalSum', String(totalSum.toFixed(2)));
+  }, [ipCashValue, ipAcquiringValue, oooCashValue, oooAcquiringValue, yandexValue]);
 
   return (
     <Layout style={Styles.stepForm as StyleProp<ViewStyle>}>
@@ -87,6 +100,17 @@ export default function ReceiptsStep({ onNext, onPrevious, data, setData }: ISte
               required
             />
           </Layout>
+        </Layout>
+
+        <Layout style={{ width: '50%', marginTop: 16 }}>
+          <Text style={{ fontWeight: 'bold' }}>Яндекс.Еда и Деливери</Text>
+          <FormTextInput
+            name="yandex"
+            label="Выручка"
+            control={control}
+            type="decimal-pad"
+            error={errors.yandex}
+          />
         </Layout>
 
         <Layout style={{ marginTop: 16 }}>

@@ -12,6 +12,7 @@ interface IFormTextInput {
   error?: FieldError;
   type?: KeyboardType;
   required?: boolean;
+  pattern?: RegExp;
 
   [otherProps: string]: any
 }
@@ -30,6 +31,7 @@ export default function FormTextInput({
   caption,
   type,
   defaultValue,
+  pattern = /^\d*(\.\d{0,2})?$/,
   required,
   ...otherProps
 }: IFormTextInput) {
@@ -41,19 +43,32 @@ export default function FormTextInput({
       }}
       name={name}
       defaultValue={defaultValue}
-      render={({ field: { onChange, value } }) => (
-        <Layout style={styles.container}>
-          <Input
-            label={label}
-            onChangeText={onChange}
-            value={value}
-            keyboardType={type}
-            status={error ? 'danger' : 'basic'}
-            caption={error?.message || caption}
-            {...otherProps}
-          />
-        </Layout>
-      )}
+      render={({ field: { onChange, value } }) => {
+        const onChangeText = (text: string) => {
+          if (pattern && !pattern.test(text)) {
+            if (!value) {
+              onChange('');
+            }
+            return;
+          }
+
+          onChange(text)
+        };
+
+        return (
+          <Layout style={styles.container}>
+            <Input
+              label={label}
+              onChangeText={onChangeText}
+              value={value}
+              keyboardType={type}
+              status={error ? 'danger' : 'basic'}
+              caption={error?.message || caption}
+              {...otherProps}
+            />
+          </Layout>
+        )
+      }}
     />
   );
 }

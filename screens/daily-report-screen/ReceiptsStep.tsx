@@ -67,6 +67,7 @@ export default function ReceiptsStep({ onNext, onPrevious, data, setData }: ISte
               label="Наличные"
               control={control}
               type="decimal-pad"
+              pattern={/^\d*(\.\d{0,2})?$/}
               error={errors.ipCash}
               required
             />
@@ -76,6 +77,7 @@ export default function ReceiptsStep({ onNext, onPrevious, data, setData }: ISte
               label="Эквайринг"
               control={control}
               error={errors.ipAcquiring}
+              pattern={/^\d*(\.\d{0,2})?$/}
               type="decimal-pad"
               required
             />
@@ -87,6 +89,7 @@ export default function ReceiptsStep({ onNext, onPrevious, data, setData }: ISte
               label="Наличные"
               control={control}
               type="decimal-pad"
+              pattern={/^\d*(\.\d{0,2})?$/}
               error={errors.oooCash}
               required
             />
@@ -97,6 +100,7 @@ export default function ReceiptsStep({ onNext, onPrevious, data, setData }: ISte
               control={control}
               error={errors.oooAcquiring}
               type="decimal-pad"
+              pattern={/^\d*(\.\d{0,2})?$/}
               required
             />
           </Layout>
@@ -110,6 +114,7 @@ export default function ReceiptsStep({ onNext, onPrevious, data, setData }: ISte
             control={control}
             type="decimal-pad"
             error={errors.yandex}
+            pattern={/^\d*(\.\d{0,2})?$/}
           />
         </Layout>
 

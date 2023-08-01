@@ -31,7 +31,7 @@ export default function FormTextInput({
   caption,
   type,
   defaultValue,
-  pattern = /^\d*(\.\d{0,2})?$/,
+  pattern,
   required,
   ...otherProps
 }: IFormTextInput) {

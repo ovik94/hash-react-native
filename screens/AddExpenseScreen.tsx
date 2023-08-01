@@ -125,7 +125,8 @@ const AddExpenseScreen: FC = ({ navigation, route }: any) => {
         name="sum"
         label="Сумма"
         placeholder="Введите сумму"
-        keyboardType="decimal-pad"
+        type="decimal-pad"
+        pattern={/^\d*(\.\d{0,2})?$/}
         control={control}
         error={errors.sum}
         disabled={loading}

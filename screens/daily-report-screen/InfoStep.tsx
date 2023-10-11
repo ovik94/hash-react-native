@@ -14,7 +14,7 @@ type FormData = {
 };
 
 const SelectOptions = [
-  { label: 'Варя', value: 'Варя' },
+  { label: 'Аня', value: 'Аня' },
   { label: 'Алина', value: 'Алина' },
   { label: 'Ариша', value: 'Ариша' },
   { label: 'Алена', value: 'Алена' }

@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { StyleSheet, View, Linking } from 'react-native';
 import { Icon, Layout, Spinner } from '@ui-kitten/components';
 import SwipeListItem from '../components/swipe-list-item/SwipeListItem';
 import SwipeList from '../components/swipe-list/SwipeList';
 import useStores from '../hooks/useStores';
-import { IContractors } from '../stores/ContractorsStore';
 import { IDailyReport } from '../stores/DailyReportsStore';
+import { ICounterparty } from "../stores/CounterpartiesStore";
 
 const styles = StyleSheet.create({
   container: {
@@ -32,33 +32,35 @@ const styles = StyleSheet.create({
 });
 
 const ContractorsScreen = () => {
-  const { contractorsStore: { fetchContractors, contractors, isLoading } } = useStores();
+  const { counterpartiesStore: { fetchCounterparties, counterparties, isLoading } } = useStores();
   const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    if (!contractors) {
-      fetchContractors();
-    }
-  }, [contractors]);
+  const listData = useMemo(() => (counterparties || []).filter(item => item.type === 'provider'), [counterparties]);
 
-  const renderItem = ({ item }: { item: IContractors }) => (
+  useEffect(() => {
+    if (!counterparties) {
+      fetchCounterparties();
+    }
+  }, [counterparties]);
+
+  const renderItem = ({ item }: { item: ICounterparty }) => (
     <SwipeListItem
       iconName="person-outline"
-      title={item.title}
-      subtitle={`${item.manager || ''} ${item.description ? (`- ${item.description}`) : ''}`}
+      title={`${item.name} ${item.companyName ? `(${item.companyName})` : ''}`}
+      subtitle={item.description}
       primaryText={item.phone}
     />
   );
 
   const onRefresh = () => {
     setRefreshing(true);
-    fetchContractors().then(() => setRefreshing(false));
+    fetchCounterparties().then(() => setRefreshing(false));
   };
 
   const rightActionComponent = <Icon style={styles.swipeListIcon} name="phone-call-outline" />;
 
   const onRightAction = (id: string) => {
-    const tel = ((contractors || []).find(item => item.id === id) || {} as IContractors).phone;
+    const tel = ((listData || []).find(item => item.id === id) || {} as ICounterparty).phone;
     Linking.openURL(`tel:${tel}`);
   };
 
@@ -67,7 +69,7 @@ const ContractorsScreen = () => {
       {isLoading && <Layout style={styles.loading}><Spinner /></Layout>}
       {!isLoading && (
         <SwipeList
-          data={contractors}
+          data={listData}
           renderItem={renderItem}
           refreshing={refreshing}
           onRefresh={onRefresh}

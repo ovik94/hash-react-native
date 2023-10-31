@@ -13,8 +13,7 @@ import FormSelect from '../components/form-controls/FormSelect';
 import FormTextInput from '../components/form-controls/FormTextInput';
 import Colors from '../constants/Colors';
 import useStores from '../hooks/useStores';
-import { Categories } from '../stores/CounterpartiesStore';
-import { ICategory } from '../stores/ExpensesStore';
+import { ExpenseCategories, ICategory } from '../stores/ExpensesStore';
 
 type FormData = {
   category: string;
@@ -47,40 +46,35 @@ const LoadingIndicator = (props: IconProps) => (
   </View>
 );
 
-const CounterpartyCategories = {
-  salary: 'service',
-  kitchen: 'provider',
-  beer: 'provider',
-  marketing: 'provider',
-  household: 'provider'
-};
-
 const AddExpenseScreen: FC = ({ navigation, route }: any) => {
   const {
-    counterpartiesStore: {
-      fetchRoleCounterparties,
-      roleCounterparties
-    },
+    counterpartiesStore: { fetchCounterparties, counterparties },
     expensesStore: { addExpense, screenMessage }
   } = useStores();
   const { control, handleSubmit, formState: { errors } } = useForm<FormData>();
   const [loading, setLoading] = useState(false);
 
-  const category = useWatch({
+  const category = useWatch<ICategory>({
+    // @ts-ignore
     control,
     name: 'category'
   });
 
   const type = route?.params?.type;
 
-  // @ts-ignore
-  const counterpartyType = CounterpartyCategories[category?.id];
+  const categoryCounterparties = useMemo(() => {
+    if (!category || !counterparties || !category.counterpartyType) {
+      return null;
+    }
+
+    return counterparties.filter(counterparty => counterparty.type === category.counterpartyType);
+  }, [counterparties, category]);
 
   useEffect(() => {
-    if (counterpartyType) {
-      fetchRoleCounterparties(counterpartyType);
+    if (!counterparties) {
+      fetchCounterparties();
     }
-  }, [counterpartyType]);
+  }, [counterparties]);
 
   const onSubmit = (data: FormData) => {
     setLoading(true);
@@ -92,7 +86,7 @@ const AddExpenseScreen: FC = ({ navigation, route }: any) => {
     <SelectItem
       accessoryLeft={<Icon style={styles.categoryIcon} name={item.icon} />}
       title={item.title}
-      key={item.id}
+      key={item.title}
     />
   );
 
@@ -103,9 +97,10 @@ const AddExpenseScreen: FC = ({ navigation, route }: any) => {
     </View>
   );
 
-  const categoryOptions = Categories.map(item => ({ value: item, label: item.title }));
-  const counterpartyOptions = useMemo(() => roleCounterparties
-    .map(item => ({ value: item.name, label: item.name })), [roleCounterparties]);
+  const categoryOptions = ExpenseCategories.map(item => ({ value: item, label: item.title }));
+
+  const counterpartyOptions = useMemo(() => (categoryCounterparties || [])
+    .map(item => ({ value: item.name, label: item.name })), [categoryCounterparties]);
 
   return (
     <Layout style={styles.container}>
@@ -133,7 +128,7 @@ const AddExpenseScreen: FC = ({ navigation, route }: any) => {
         required
       />
 
-      {counterpartyType && (
+      {categoryCounterparties && (
         <FormSelect
           items={counterpartyOptions}
           name="counterparty"

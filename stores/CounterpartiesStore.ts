@@ -1,37 +1,34 @@
 import { makeAutoObservable } from 'mobx';
-import { ICategory } from './ExpensesStore';
 import { RootStore } from './RootStore';
+
+export enum PrivilegeType {
+
+}
+
 
 export interface ICounterparty {
   id: string;
   name: string;
-  role: string;
+  type: ICounterpartyTypes;
+  companyName?: string;
+  phone?: string;
+  description?: string;
 }
 
-export interface ICounterparties {
-  kitchen?: Array<ICounterparty>;
-  service?: Array<ICounterparty>;
-  manager?: Array<ICounterparty>;
-  provider?: Array<ICounterparty>;
+export interface IUser {
+  id: string;
+  name: string;
+  phone: string;
+  role: 'admin' | 'waiter' | 'supervisor',
+  privilege: Array<PrivilegeType>
 }
 
-export type IRole = 'kitchen' | 'service' | 'manager' | 'provider';
-
-export const Categories: Array<ICategory> = [
-  { id: 'kitchen', title: 'Закуп сырья кухня', icon: 'shopping-cart' },
-  { id: 'beer', title: 'Закуп пиво', icon: 'shopping-cart' },
-  { id: 'salary', title: 'ФОТ', icon: 'heart' },
-  { id: 'courier', title: 'Курьер', icon: 'car' },
-  { id: 'taxi', title: 'Такси', icon: 'car' },
-  { id: 'marketing', title: 'Маркетинг, промо-материалы', icon: 'globe' },
-  { id: 'household', title: 'Хоз. нужда', icon: 'cube' },
-  { id: 'other', title: 'Прочие расходы', icon: 'more-horizontal' }
-];
+export type ICounterpartyTypes = 'kitchen' | 'service' | 'manager' | 'provider';
 
 export default class CounterpartiesStore {
-  public counterparties: ICounterparties | null = null;
+  public counterparties: Array<ICounterparty> | null = null;
 
-  public roleCounterparties: Array<ICounterparty> = [];
+  public users: Array<IUser> | null = null;
 
   public isLoading = false;
 
@@ -46,21 +43,33 @@ export default class CounterpartiesStore {
     this.isLoading = value;
   };
 
-  private setCounterparties = (counterparties: ICounterparties) => {
+  private setCounterparties = (counterparties: Array<ICounterparty>) => {
     this.counterparties = counterparties;
   };
 
-  private setRoleCounterparties = (counterparties: Array<ICounterparty>) => {
-    this.roleCounterparties = counterparties;
+  private setUsers = (users: Array<IUser>) => {
+    this.users = users;
   };
 
-  public fetchRoleCounterparties = (role: IRole) => {
+  public fetchUsers = () => {
     this.setLoading(true);
     return this.rootStore
-      .createRequest<Array<ICounterparty>>('fetchCounterparties', {}, { role })
+      .createRequest<Array<IUser>>('fetchUsers')
       .then(({ status, data }) => {
         if (status === 'OK' && data) {
-          this.setRoleCounterparties(data);
+          this.setUsers(data);
+        }
+      })
+      .finally(() => this.setLoading(false));
+  };
+
+  public fetchCounterparties = (type?: ICounterpartyTypes) => {
+    this.setLoading(true);
+    return this.rootStore
+      .createRequest<Array<ICounterparty>>('fetchCounterparties', {}, { type })
+      .then(({ status, data }) => {
+        if (status === 'OK' && data) {
+          this.setCounterparties(data);
         }
       })
       .finally(() => this.setLoading(false));

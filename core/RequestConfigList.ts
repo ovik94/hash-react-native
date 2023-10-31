@@ -27,11 +27,11 @@ const RequestConfigList: IRequestConfigList = {
   },
   fetchCounterparties: {
     method: RequestMethods.GET,
-    path: '/api/counterparties'
+    path: '/api/v2/counterparties'
   },
-  fetchContractors: {
+  fetchUsers: {
     method: RequestMethods.GET,
-    path: '/api/contractors'
+    path: '/api/user/list'
   }
 };
 

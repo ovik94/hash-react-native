@@ -4,7 +4,7 @@ import { IExpenseType } from '../components/expenses-list/ExpensesList';
 import { RootStore } from './RootStore';
 
 export interface ICategory {
-  id: string;
+  counterpartyType?: string;
   title: string;
   icon: string;
 }
@@ -16,6 +16,17 @@ export interface IExpense {
   counterparty?: string;
   comment?: string;
 }
+
+export const ExpenseCategories: Array<ICategory> = [
+  { title: 'Закуп сырья кухня', icon: 'shopping-cart' },
+  { title: 'Закуп пиво', icon: 'shopping-cart' },
+  { counterpartyType: 'service', title: 'ФОТ', icon: 'heart' },
+  { title: 'Маркетинг, промо-материалы', icon: 'globe' },
+  { title: 'Хоз. нужда', icon: 'cube' },
+  { title: 'Курьер', icon: 'car' },
+  { title: 'Такси', icon: 'car' },
+  { title: 'Прочие расходы', icon: 'more-horizontal' }
+];
 
 export default class ExpensesStore {
   public expenses: Array<IExpense> | null = null;

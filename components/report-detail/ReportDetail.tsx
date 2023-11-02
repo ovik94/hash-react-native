@@ -3,6 +3,7 @@ import { StyleSheet } from 'react-native';
 import { Divider, Layout, Text } from '@ui-kitten/components';
 import { IDailyReport } from '../../stores/DailyReportsStore';
 import { formatAmountString } from '../utils/formatAmountString';
+import dateFormatter from "../utils/dateFormatter";
 
 interface IReportDetail {
   data?: IDailyReport;
@@ -49,7 +50,7 @@ const ReportDetail: FC<IReportDetail> = ({ data }) => {
     <Layout style={styles.container}>
       <Layout style={styles.header}>
         {renderItem('Администратор', data?.adminName)}
-        {renderItem('Дата', data?.date)}
+        {renderItem('Дата', dateFormatter(data?.date))}
         {renderItem('Общая выручка', formatAmountString(data?.totalSum), true)}
       </Layout>
       <Divider style={styles.divider} />

@@ -9,7 +9,7 @@ import SwipeList from '../../components/swipe-list/SwipeList';
 import { formatAmountString } from '../../components/utils/formatAmountString';
 import useStores from '../../hooks/useStores';
 import { IDailyReport } from '../../stores/DailyReportsStore';
-import { isThisMonth, startOfMonth, lastDayOfMonth, addDays } from "date-fns";
+import { startOfMonth, lastDayOfMonth } from "date-fns";
 import dateFormatter from "../../components/utils/dateFormatter";
 
 const ReloadIcon = (props: IconProps) => (
@@ -47,30 +47,25 @@ const DailyReportScreen = ({ navigation }: any) => {
   const [refreshing, setRefreshing] = useState(false);
   const [reportsData, setReportsData] = useState<Array<IDailyReport>>([]);
   const actionSheetRef = createRef<ActionSheet>();
-  const [reportsParams, setReportsParams] = useState<{ from?: string, to?: string }>();
+
+  const reportsParams = {
+    from: dateFormatter(startOfMonth(new Date())),
+    to: dateFormatter(lastDayOfMonth(new Date()))
+  };
 
   useEffect(() => {
-    const from = dateFormatter(startOfMonth(new Date()));
-    const to = dateFormatter(lastDayOfMonth(new Date()));
-
-    setReportsParams({ from, to });
-  }, []);
-
-  useEffect(() => {
-    if (reportsParams) {
       setLoading(true);
       fetchReports(reportsParams).then((res) => {
         setReportsData(res);
         setLoading(false)
       });
-    }
-  }, [reportsParams]);
+  }, []);
 
   const renderItem = ({ item }: { item: IDailyReport }) => (
     <SwipeListItem
       iconName="file-text"
       title={item.adminName}
-      subtitle={item.date}
+      subtitle={dateFormatter(item.date)}
       primaryText={formatAmountString(item.totalSum)}
     />
   );

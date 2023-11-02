@@ -8,13 +8,14 @@ import dateFormatter from '../../components/utils/dateFormatter';
 import Styles from '../../constants/Styles';
 import { IStepProps } from './AddDailyReportScreen';
 import useStores from "../../hooks/useStores";
+import { observer } from "mobx-react-lite";
 
 type FormData = {
   date: string;
   adminName: string;
 };
 
-export default function InfoStep({ onNext, data, setData }: IStepProps) {
+const InfoStep = ({ onNext, data, setData }: IStepProps) => {
   const { counterpartiesStore: { fetchUsers, users } } = useStores();
 
   const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
@@ -70,3 +71,5 @@ export default function InfoStep({ onNext, data, setData }: IStepProps) {
     </Layout>
   );
 }
+
+export default observer(InfoStep);

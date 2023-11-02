@@ -67,7 +67,7 @@ const ExpensesList: FC<IExpenseList> = ({ data, type, hasRefresh = true }) => {
   }, [type]);
 
   const onDelete = (id: string) => {
-    deleteExpense(id, type);
+    deleteExpense(id);
   };
 
   const onRefresh = () => {

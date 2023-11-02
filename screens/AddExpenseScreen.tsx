@@ -60,8 +60,6 @@ const AddExpenseScreen: FC = ({ navigation, route }: any) => {
     name: 'category'
   });
 
-  const type = route?.params?.type;
-
   const categoryCounterparties = useMemo(() => {
     if (!category || !counterparties || !category.counterpartyType) {
       return null;
@@ -78,7 +76,7 @@ const AddExpenseScreen: FC = ({ navigation, route }: any) => {
 
   const onSubmit = (data: FormData) => {
     setLoading(true);
-    addExpense(data, () => navigation.goBack(), type)
+    addExpense(data, () => navigation.goBack())
       .catch(() => setLoading(false));
   };
 

@@ -68,20 +68,13 @@ export default class ExpensesStore {
       this.setScreenMessage('Произошла ошибка при загрузке расходов');
     });
 
-  public deleteExpense = (id: string, type: IExpenseType) => {
-    const newExpenses = this.expenses?.filter(item => item.id !== id) || [];
-
-    if (type !== 'expensesList') {
-      this.setExpenses(newExpenses);
-      return Promise.resolve();
-    }
-
+  public deleteExpense = (id?: string) => {
     return this.rootStore
       .createRequest('deleteExpense', { id })
-      .then(({ status }) => {
+      .then(({ status, data }) => {
         if (status === 'OK') {
           this.setScreenMessage('');
-          this.setExpenses(newExpenses);
+          this.setExpenses(data);
         } else {
           this.setScreenMessage('Не удалось удалить расход');
         }
@@ -91,21 +84,12 @@ export default class ExpensesStore {
       });
   };
 
-  public addExpense = (data: any, cb: () => void, type: IExpenseType) => {
-    const id = String(uuid.v4());
-    const newExpenses = (this.expenses || []).concat([{ ...data, id }]);
-
-    if (type !== 'expensesList') {
-      this.setExpenses(newExpenses);
-      cb();
-      return Promise.resolve();
-    }
-
+  public addExpense = (data: any, cb: () => void) => {
     return this.rootStore
-      .createRequest('addExpense', { ...data, id })
-      .then(({ status }) => {
+      .createRequest('addExpense', data)
+      .then(({ status , data }) => {
         if (status === 'OK') {
-          this.setExpenses(newExpenses);
+          this.setExpenses(data);
           cb();
         } else {
           this.setScreenMessage('Не удалось добавить расход');

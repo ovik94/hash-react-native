@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
 });
 
 const ExpensesStep = ({ onComplete, onPrevious, data, type, navigation }: IStepProps) => {
-  const { expensesStore: { fetchExpenses, expenses } } = useStores();
+  const { expensesStore: { fetchExpenses, deleteExpense, expenses } } = useStores();
 
   useEffect(() => {
     if (type === 'add') {
@@ -40,6 +40,7 @@ const ExpensesStep = ({ onComplete, onPrevious, data, type, navigation }: IStepP
     const resultData = { ...data, expenses, totalCash: String(totalCash) };
 
     onComplete(resultData);
+    deleteExpense();
   };
 
   const onOpenAddExpense = () => {

@@ -1,31 +1,39 @@
-import React, { useEffect } from 'react';
-import { observer } from 'mobx-react-lite';
-import { StyleSheet, ViewStyle, StyleProp } from 'react-native';
-import { Button, Icon, Layout, Text } from '@ui-kitten/components';
-import ExpensesList from '../../components/expenses-list/ExpensesList';
-import Colors from '../../constants/Colors';
-import Styles from '../../constants/Styles';
-import useStores from '../../hooks/useStores';
-import { IStepProps } from './AddDailyReportScreen';
+import React, { useEffect } from "react";
+import { observer } from "mobx-react-lite";
+import { StyleSheet, ViewStyle, StyleProp } from "react-native";
+import { Button, Icon, Layout, Text } from "@ui-kitten/components";
+import ExpensesList from "../../components/expenses-list/ExpensesList";
+import Colors from "../../constants/Colors";
+import Styles from "../../constants/Styles";
+import useStores from "../../hooks/useStores";
+import { IStepProps } from "./AddDailyReportScreen";
 
 const styles = StyleSheet.create({
   addIcon: {
     width: 32,
     height: 32,
     tintColor: Colors.light.tint,
-    marginHorizontal: 8
+    marginHorizontal: 8,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between'
-  }
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
 });
 
-const ExpensesStep = ({ onComplete, onPrevious, data, type, navigation }: IStepProps) => {
-  const { expensesStore: { fetchExpenses, deleteExpense, expenses } } = useStores();
+const ExpensesStep = ({
+  onComplete,
+  onPrevious,
+  data,
+  type,
+  navigation,
+}: IStepProps) => {
+  const {
+    expensesStore: { fetchExpenses, expenses },
+  } = useStores();
 
   useEffect(() => {
-    if (type === 'add') {
+    if (type === "add") {
       fetchExpenses();
     }
   }, []);
@@ -40,11 +48,10 @@ const ExpensesStep = ({ onComplete, onPrevious, data, type, navigation }: IStepP
     const resultData = { ...data, expenses, totalCash: String(totalCash) };
 
     onComplete(resultData);
-    deleteExpense();
   };
 
   const onOpenAddExpense = () => {
-    navigation.navigate('AddExpense', { type: 'report' });
+    navigation.navigate("AddExpense", { type: "report" });
   };
 
   return (
@@ -54,13 +61,24 @@ const ExpensesStep = ({ onComplete, onPrevious, data, type, navigation }: IStepP
           <Text category="h5">Расходы за день</Text>
           <Icon name="plus" style={styles.addIcon} onPress={onOpenAddExpense} />
         </Layout>
-        <ExpensesList data={data.expenses || []} type={type === 'add' ? 'reportAdd' : 'reportUpdate'} hasRefresh={false} />
+        <ExpensesList
+          data={data.expenses || []}
+          type={type === "add" ? "reportAdd" : "reportUpdate"}
+          hasRefresh={false}
+        />
       </Layout>
       <Layout style={Styles.stepButtons as StyleProp<ViewStyle>}>
-        <Button onPress={onPrevious} appearance="outline" style={{ width: '45%' } as StyleProp<ViewStyle>}>
+        <Button
+          onPress={onPrevious}
+          appearance="outline"
+          style={{ width: "45%" } as StyleProp<ViewStyle>}
+        >
           Назад
         </Button>
-        <Button onPress={onSubmit} style={{ width: '45%' } as StyleProp<ViewStyle>}>
+        <Button
+          onPress={onSubmit}
+          style={{ width: "45%" } as StyleProp<ViewStyle>}
+        >
           Сохранить
         </Button>
       </Layout>

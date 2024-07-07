@@ -1,38 +1,38 @@
-import { IRequestConfigList, RequestMethods } from './request-factory';
+import { IRequestConfigList, RequestMethods } from "./request-factory";
 
 const RequestConfigList: IRequestConfigList = {
   fetchReports: {
     method: RequestMethods.GET,
-    path: '/api/v2/app/dailyReport/reports'
+    path: "/api/app/dailyReport/reports",
   },
   addReport: {
     method: RequestMethods.POST,
-    path: '/api/v2/app/dailyReport/add'
+    path: "/api/app/dailyReport/add",
   },
   updateReport: {
     method: RequestMethods.POST,
-    path: '/api/v2/app/dailyReport/update'
+    path: "/api/app/dailyReport/update",
   },
   fetchExpenses: {
     method: RequestMethods.GET,
-    path: '/api/v2/app/expenses'
+    path: "/api/app/expenses",
   },
   addExpense: {
     method: RequestMethods.POST,
-    path: '/api/v2/app/expenses/add'
+    path: "/api/app/expenses/add",
   },
   deleteExpense: {
     method: RequestMethods.POST,
-    path: '/api/v2/app/expenses/delete'
+    path: "/api/app/expenses/delete",
   },
   fetchCounterparties: {
     method: RequestMethods.GET,
-    path: '/api/v2/counterparties'
+    path: "/api/v2/counterparties",
   },
   fetchUsers: {
     method: RequestMethods.GET,
-    path: '/api/user/list'
-  }
+    path: "/api/user/list",
+  },
 };
 
 export default RequestConfigList;

@@ -1,7 +1,7 @@
-import { makeAutoObservable } from 'mobx';
-import uuid from 'react-native-uuid';
-import { IExpenseType } from '../components/expenses-list/ExpensesList';
-import { RootStore } from './RootStore';
+import { makeAutoObservable } from "mobx";
+import uuid from "react-native-uuid";
+import { IExpenseType } from "../components/expenses-list/ExpensesList";
+import { RootStore } from "./RootStore";
 
 export interface ICategory {
   counterpartyType?: string;
@@ -18,20 +18,20 @@ export interface IExpense {
 }
 
 export const ExpenseCategories: Array<ICategory> = [
-  { title: 'Закуп сырья кухня', icon: 'shopping-cart' },
-  { title: 'Закуп пиво', icon: 'shopping-cart' },
-  { counterpartyType: 'service', title: 'ФОТ', icon: 'heart' },
-  { title: 'Маркетинг, промо-материалы', icon: 'globe' },
-  { title: 'Хоз. нужда', icon: 'cube' },
-  { title: 'Курьер', icon: 'car' },
-  { title: 'Такси', icon: 'car' },
-  { title: 'Прочие расходы', icon: 'more-horizontal' }
+  { title: "Закуп сырья кухня", icon: "shopping-cart" },
+  { title: "Закуп пиво", icon: "shopping-cart" },
+  { counterpartyType: "service", title: "ФОТ", icon: "heart" },
+  { title: "Маркетинг, промо-материалы", icon: "globe" },
+  { title: "Хоз. нужда", icon: "cube" },
+  { title: "Курьер", icon: "car" },
+  { title: "Такси", icon: "car" },
+  { title: "Прочие расходы", icon: "more-horizontal" },
 ];
 
 export default class ExpensesStore {
   public expenses: Array<IExpense> | null = null;
 
-  public screenMessage = '';
+  public screenMessage = "";
 
   public isLoading = false;
 
@@ -54,49 +54,63 @@ export default class ExpensesStore {
     this.screenMessage = message;
   };
 
-  public fetchExpenses = (additionalExpenses?: Array<IExpense>) => this.rootStore
-    .createRequest<Array<IExpense>>('fetchExpenses')
-    .then(({ status, data }) => {
-      if (status === 'OK' && data) {
-        this.setExpenses(data.concat(additionalExpenses || []));
-      } else {
-        this.setExpenses([]);
-      }
-      this.setScreenMessage('');
-    })
-    .catch(() => {
-      this.setScreenMessage('Произошла ошибка при загрузке расходов');
-    });
-
-  public deleteExpense = (id?: string) => {
-    return this.rootStore
-      .createRequest('deleteExpense', { id })
+  public fetchExpenses = (additionalExpenses?: Array<IExpense>) =>
+    this.rootStore
+      .createRequest<Array<IExpense>>("fetchExpenses")
       .then(({ status, data }) => {
-        if (status === 'OK') {
-          this.setScreenMessage('');
-          this.setExpenses(data);
+        if (status === "OK" && data) {
+          this.setExpenses(data.concat(additionalExpenses || []));
         } else {
-          this.setScreenMessage('Не удалось удалить расход');
+          this.setExpenses([]);
         }
+        this.setScreenMessage("");
       })
       .catch(() => {
-        this.setScreenMessage('Не удалось удалить расход');
+        this.setScreenMessage("Произошла ошибка при загрузке расходов");
+      });
+
+  public deleteExpense = (id: string, type: IExpenseType) => {
+    const newExpenses = this.expenses?.filter((item) => item.id !== id) || [];
+
+    if (type !== "expensesList") {
+      this.setExpenses(newExpenses);
+      return Promise.resolve();
+    }
+
+    return this.rootStore
+      .createRequest("deleteExpense", { id })
+      .then(({ status }) => {
+        if (status === "OK") {
+          this.setScreenMessage("");
+          this.setExpenses(newExpenses);
+        } else {
+          this.setScreenMessage("Не удалось удалить расход");
+        }
       });
   };
 
-  public addExpense = (data: any, cb: () => void) => {
+  public addExpense = (data: any, cb: () => void, type: IExpenseType) => {
+    const id = String(uuid.v4());
+    const newExpenses = (this.expenses || []).concat([{ ...data, id }]);
+
+    if (type !== "expensesList") {
+      this.setExpenses(newExpenses);
+      cb();
+      return Promise.resolve();
+    }
+
     return this.rootStore
-      .createRequest('addExpense', data)
-      .then(({ status , data }) => {
-        if (status === 'OK') {
-          this.setExpenses(data);
+      .createRequest("addExpense", { ...data, id })
+      .then(({ status }) => {
+        if (status === "OK") {
+          this.setExpenses(newExpenses);
           cb();
         } else {
-          this.setScreenMessage('Не удалось добавить расход');
+          this.setScreenMessage("Не удалось добавить расход");
         }
       })
       .catch(() => {
-        this.setScreenMessage('Не удалось добавить расход');
+        this.setScreenMessage("Не удалось добавить расход");
       });
   };
 }

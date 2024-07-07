@@ -1,19 +1,21 @@
-import React, { FC, useEffect, useMemo, useState } from 'react';
-import { observer } from 'mobx-react-lite';
-import { useForm, useWatch } from 'react-hook-form';
-import { StyleSheet, View } from 'react-native';
-import { Button,
+import React, { FC, useEffect, useMemo, useState } from "react";
+import { observer } from "mobx-react-lite";
+import { useForm, useWatch } from "react-hook-form";
+import { StyleSheet, View } from "react-native";
+import {
+  Button,
   Icon,
   IconProps,
   Layout,
   SelectItem,
   Spinner,
-  Text } from '@ui-kitten/components';
-import FormSelect from '../components/form-controls/FormSelect';
-import FormTextInput from '../components/form-controls/FormTextInput';
-import Colors from '../constants/Colors';
-import useStores from '../hooks/useStores';
-import { ExpenseCategories, ICategory } from '../stores/ExpensesStore';
+  Text,
+} from "@ui-kitten/components";
+import FormSelect from "../components/form-controls/FormSelect";
+import FormTextInput from "../components/form-controls/FormTextInput";
+import Colors from "../constants/Colors";
+import useStores from "../hooks/useStores";
+import { ExpenseCategories, ICategory } from "../stores/ExpensesStore";
 
 type FormData = {
   category: string;
@@ -24,20 +26,20 @@ type FormData = {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16
+    padding: 16,
   },
   button: {
-    marginTop: 32
+    marginTop: 32,
   },
   indicator: {
-    justifyContent: 'center',
-    alignItems: 'center'
+    justifyContent: "center",
+    alignItems: "center",
   },
   categoryIcon: {
     height: 24,
     width: 24,
-    tintColor: Colors.light.tabIconDefault
-  }
+    tintColor: Colors.light.tabIconDefault,
+  },
 });
 
 const LoadingIndicator = (props: IconProps) => (
@@ -49,23 +51,31 @@ const LoadingIndicator = (props: IconProps) => (
 const AddExpenseScreen: FC = ({ navigation, route }: any) => {
   const {
     counterpartiesStore: { fetchCounterparties, counterparties },
-    expensesStore: { addExpense, screenMessage }
+    expensesStore: { addExpense, screenMessage },
   } = useStores();
-  const { control, handleSubmit, formState: { errors } } = useForm<FormData>();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>();
   const [loading, setLoading] = useState(false);
 
   const category = useWatch<ICategory>({
     // @ts-ignore
     control,
-    name: 'category'
+    name: "category",
   });
+
+  const type = route?.params?.type;
 
   const categoryCounterparties = useMemo(() => {
     if (!category || !counterparties || !category.counterpartyType) {
       return null;
     }
 
-    return counterparties.filter(counterparty => counterparty.type === category.counterpartyType);
+    return counterparties.filter(
+      (counterparty) => counterparty.type === category.counterpartyType
+    );
   }, [counterparties, category]);
 
   useEffect(() => {
@@ -76,8 +86,7 @@ const AddExpenseScreen: FC = ({ navigation, route }: any) => {
 
   const onSubmit = (data: FormData) => {
     setLoading(true);
-    addExpense(data, () => navigation.goBack())
-      .catch(() => setLoading(false));
+    addExpense(data, () => navigation.goBack(), type);
   };
 
   const renderCategoryItem = (item: ICategory) => (
@@ -91,15 +100,27 @@ const AddExpenseScreen: FC = ({ navigation, route }: any) => {
   const renderCategoryValue = (data: ICategory) => (
     <View>
       <Icon style={styles.categoryIcon} name={data.icon} />
-      <Text style={{ left: 32, top: 4, position: 'absolute' }}>{data.title}</Text>
+      <Text style={{ left: 32, top: 4, position: "absolute" }}>
+        {data.title}
+      </Text>
     </View>
   );
 
-  const categoryOptions = ExpenseCategories.map(item => ({ value: item, label: item.title }));
+  const categoryOptions = ExpenseCategories.map((item) => ({
+    value: item,
+    label: item.title,
+  }));
 
-  const counterpartyOptions = useMemo(() => (categoryCounterparties || [])
-    .map(item => ({ value: item.name, label: item.name })), [categoryCounterparties]);
+  const counterpartyOptions = useMemo(
+    () =>
+      (categoryCounterparties || []).map((item) => ({
+        value: item.name,
+        label: item.name,
+      })),
+    [categoryCounterparties]
+  );
 
+  console.log(categoryOptions, "categoryOptions");
   return (
     <Layout style={styles.container}>
       <FormSelect

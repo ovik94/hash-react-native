@@ -1,10 +1,7 @@
-import { makeAutoObservable } from 'mobx';
-import { RootStore } from './RootStore';
+import { makeAutoObservable } from "mobx";
+import { RootStore } from "./RootStore";
 
-export enum PrivilegeType {
-
-}
-
+export enum PrivilegeType {}
 
 export interface ICounterparty {
   id: string;
@@ -19,11 +16,11 @@ export interface IUser {
   id: string;
   name: string;
   phone: string;
-  role: 'admin' | 'waiter' | 'supervisor',
-  privilege: Array<PrivilegeType>
+  role: "admin" | "waiter" | "supervisor";
+  privilege: Array<PrivilegeType>;
 }
 
-export type ICounterpartyTypes = 'kitchen' | 'service' | 'manager' | 'provider';
+export type ICounterpartyTypes = "kitchen" | "service" | "manager" | "provider";
 
 export default class CounterpartiesStore {
   public counterparties: Array<ICounterparty> | null = null;
@@ -54,9 +51,9 @@ export default class CounterpartiesStore {
   public fetchUsers = () => {
     this.setLoading(true);
     return this.rootStore
-      .createRequest<Array<IUser>>('fetchUsers')
+      .createRequest<Array<IUser>>("fetchUsers")
       .then(({ status, data }) => {
-        if (status === 'OK' && data) {
+        if (status === "OK" && data) {
           this.setUsers(data);
         }
       })
@@ -65,10 +62,13 @@ export default class CounterpartiesStore {
 
   public fetchCounterparties = (type?: ICounterpartyTypes) => {
     this.setLoading(true);
+
     return this.rootStore
-      .createRequest<Array<ICounterparty>>('fetchCounterparties', {}, { type })
+      .createRequest<Array<ICounterparty>>("fetchCounterparties", undefined, {
+        type,
+      })
       .then(({ status, data }) => {
-        if (status === 'OK' && data) {
+        if (status === "OK" && data) {
           this.setCounterparties(data);
         }
       })

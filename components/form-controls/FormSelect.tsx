@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { Controller, FieldError } from 'react-hook-form';
-import { StyleSheet } from 'react-native';
-import { IndexPath, Layout, Select, SelectItem } from '@ui-kitten/components';
+import React, { useState } from "react";
+import { Controller, FieldError } from "react-hook-form";
+import { StyleSheet } from "react-native";
+import { IndexPath, Layout, Select, SelectItem } from "@ui-kitten/components";
 
 interface IFormSelect {
   name: string;
   label: string;
-  items: Array<{ value: any; label: string; }>
+  items: Array<{ value: any; label: string }>;
   control: any;
   defaultValue?: string;
   disabled?: boolean;
@@ -17,13 +17,13 @@ interface IFormSelect {
   renderItem?: (item: any) => JSX.Element;
   renderValue?: (data: any) => JSX.Element;
 
-  [otherProps: string]: any
+  [otherProps: string]: any;
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 8
-  }
+    marginVertical: 8,
+  },
 });
 
 export default function FormSelect({
@@ -46,7 +46,7 @@ export default function FormSelect({
     <Controller
       control={control}
       rules={{
-        required
+        required,
       }}
       defaultValue={defaultValue}
       name={name}
@@ -75,11 +75,17 @@ export default function FormSelect({
               disabled={disabled}
               onSelect={onSelect}
               value={selectValue}
-              status={error ? 'danger' : 'basic'}
+              status={error ? "danger" : "basic"}
               caption={error?.message || caption}
               {...otherProps}
             >
-              {items.map(item => (renderItem ? renderItem(item.value) : <SelectItem title={item.label} key={item.value} />))}
+              {items.map((item) =>
+                renderItem ? (
+                  renderItem(item)
+                ) : (
+                  <SelectItem title={item.label} key={item.value} />
+                )
+              )}
             </Select>
           </Layout>
         );

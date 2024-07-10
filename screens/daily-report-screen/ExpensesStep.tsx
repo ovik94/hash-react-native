@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { StyleSheet, ViewStyle, StyleProp } from "react-native";
 import { Button, Icon, Layout, Text } from "@ui-kitten/components";
-import ExpensesList from "../../components/expenses-list/ExpensesList";
+import { ExpensesList } from "../../components";
 import Colors from "../../constants/Colors";
 import Styles from "../../constants/Styles";
 import useStores from "../../hooks/useStores";

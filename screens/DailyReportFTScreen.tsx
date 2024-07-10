@@ -2,18 +2,19 @@ import React, { createRef, useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { StyleSheet } from "react-native";
 import ActionSheet from "react-native-actions-sheet";
+import { startOfMonth, lastDayOfMonth } from "date-fns";
 import { Icon, Layout, Spinner, Text } from "@ui-kitten/components";
 import {
   ReportDetail,
   SwipeListItem,
   SwipeList,
   ReloadButton,
-} from "../../components";
-import formatAmountString from "../../components/utils/formatAmountString";
-import useStores from "../../hooks/useStores";
-import { IDailyReport } from "../../stores/DailyReportsStore";
-import { startOfMonth, lastDayOfMonth } from "date-fns";
-import dateFormatter from "../../components/utils/dateFormatter";
+} from "../components";
+
+import formatAmountString from "../components/utils/formatAmountString";
+import useStores from "../hooks/useStores";
+import { IDailyReport } from "../stores/DailyReportsStore";
+import dateFormatter from "../components/utils/dateFormatter";
 
 const styles = StyleSheet.create({
   container: {
@@ -36,7 +37,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const DailyReportScreen = ({ navigation }: any) => {
+const DailyReportFTScreen = ({ navigation }: any) => {
   const {
     dailyReportStore: { fetchReports, screenMessage },
   } = useStores();
@@ -156,4 +157,4 @@ const DailyReportScreen = ({ navigation }: any) => {
   );
 };
 
-export default observer(DailyReportScreen);
+export default observer(DailyReportFTScreen);

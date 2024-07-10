@@ -1,6 +1,14 @@
 import { IRequestConfigList, RequestMethods } from "./request-factory";
 
 const RequestConfigList: IRequestConfigList = {
+  fetchUsers: {
+    method: RequestMethods.GET,
+    path: "/api/user/list",
+  },
+  login: {
+    method: RequestMethods.POST,
+    path: "/api/user/login",
+  },
   fetchReports: {
     method: RequestMethods.GET,
     path: "/api/app/dailyReport/reports",
@@ -28,10 +36,6 @@ const RequestConfigList: IRequestConfigList = {
   fetchCounterparties: {
     method: RequestMethods.GET,
     path: "/api/v2/counterparties",
-  },
-  fetchUsers: {
-    method: RequestMethods.GET,
-    path: "/api/user/list",
   },
 };
 

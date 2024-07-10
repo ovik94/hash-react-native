@@ -10,7 +10,7 @@ import {
   Text,
   ViewPager,
 } from "@ui-kitten/components";
-import { formatAmountString } from "../../components/utils/formatAmountString";
+import formatAmountString from "../../components/utils/formatAmountString";
 import Colors from "../../constants/Colors";
 import { CoreContext } from "../../core/CoreContext";
 import useStores from "../../hooks/useStores";

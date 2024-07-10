@@ -2,8 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { StyleSheet, View, Linking } from "react-native";
 import { Icon, Layout, Spinner } from "@ui-kitten/components";
-import SwipeListItem from "../components/swipe-list-item/SwipeListItem";
-import SwipeList from "../components/swipe-list/SwipeList";
+import { SwipeListItem, SwipeList } from "../components";
 import useStores from "../hooks/useStores";
 import { IDailyReport } from "../stores/DailyReportsStore";
 import { ICounterparty } from "../stores/CounterpartiesStore";
@@ -42,10 +41,8 @@ const ContractorsScreen = () => {
     [counterparties]
   );
 
-  console.log(counterparties, "counterparties");
   useEffect(() => {
     if (!counterparties) {
-      console.log("-----fetch-----");
       fetchCounterparties();
     }
   }, [counterparties]);

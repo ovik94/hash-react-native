@@ -11,11 +11,11 @@ import {
   Spinner,
   Text,
 } from "@ui-kitten/components";
-import FormSelect from "../components/form-controls/FormSelect";
-import FormTextInput from "../components/form-controls/FormTextInput";
+import { FormSelect, FormTextInput } from "../components";
 import Colors from "../constants/Colors";
 import useStores from "../hooks/useStores";
 import { ExpenseCategories, ICategory } from "../stores/ExpensesStore";
+import { ISelectItem } from "types";
 
 type FormData = {
   category: string;
@@ -89,11 +89,13 @@ const AddExpenseScreen: FC = ({ navigation, route }: any) => {
     addExpense(data, () => navigation.goBack(), type);
   };
 
-  const renderCategoryItem = (item: ICategory) => (
+  const renderCategoryItem = (item: ISelectItem<ICategory>) => (
     <SelectItem
-      accessoryLeft={<Icon style={styles.categoryIcon} name={item.icon} />}
-      title={item.title}
-      key={item.title}
+      accessoryLeft={
+        <Icon style={styles.categoryIcon} name={item.value.icon} />
+      }
+      title={item.value.title}
+      key={item.value.title}
     />
   );
 
@@ -120,7 +122,6 @@ const AddExpenseScreen: FC = ({ navigation, route }: any) => {
     [categoryCounterparties]
   );
 
-  console.log(categoryOptions, "categoryOptions");
   return (
     <Layout style={styles.container}>
       <FormSelect

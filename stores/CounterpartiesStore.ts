@@ -1,8 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import { RootStore } from "./RootStore";
 
-export enum PrivilegeType {}
-
 export interface ICounterparty {
   id: string;
   name: string;
@@ -12,20 +10,10 @@ export interface ICounterparty {
   description?: string;
 }
 
-export interface IUser {
-  id: string;
-  name: string;
-  phone: string;
-  role: "admin" | "waiter" | "supervisor";
-  privilege: Array<PrivilegeType>;
-}
-
 export type ICounterpartyTypes = "kitchen" | "service" | "manager" | "provider";
 
 export default class CounterpartiesStore {
   public counterparties: Array<ICounterparty> | null = null;
-
-  public users: Array<IUser> | null = null;
 
   public isLoading = false;
 
@@ -42,22 +30,6 @@ export default class CounterpartiesStore {
 
   private setCounterparties = (counterparties: Array<ICounterparty>) => {
     this.counterparties = counterparties;
-  };
-
-  private setUsers = (users: Array<IUser>) => {
-    this.users = users;
-  };
-
-  public fetchUsers = () => {
-    this.setLoading(true);
-    return this.rootStore
-      .createRequest<Array<IUser>>("fetchUsers")
-      .then(({ status, data }) => {
-        if (status === "OK" && data) {
-          this.setUsers(data);
-        }
-      })
-      .finally(() => this.setLoading(false));
   };
 
   public fetchCounterparties = (type?: ICounterpartyTypes) => {

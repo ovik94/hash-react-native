@@ -1,7 +1,7 @@
 import { makeAutoObservable } from "mobx";
 import uuid from "react-native-uuid";
-import { IExpenseType } from "../components/expenses-list/ExpensesList";
 import { RootStore } from "./RootStore";
+import { IExpenseType } from "components/expenses-list/ExpensesList";
 
 export interface ICategory {
   counterpartyType?: string;

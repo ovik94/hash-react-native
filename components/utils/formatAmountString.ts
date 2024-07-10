@@ -1,1 +1,1 @@
-export const formatAmountString = (amount?: string) => `${amount || '0.00'} ₽`;
+export default (amount?: string) => `${amount || "0.00"} ₽`;

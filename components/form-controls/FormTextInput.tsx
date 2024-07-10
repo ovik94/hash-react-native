@@ -1,9 +1,9 @@
-import React from 'react';
-import { Controller, FieldError } from 'react-hook-form';
-import { StyleSheet, KeyboardType } from 'react-native';
-import { Input, Layout } from '@ui-kitten/components';
+import React from "react";
+import { Controller, FieldError } from "react-hook-form";
+import { StyleSheet, KeyboardType } from "react-native";
+import { Input, Layout } from "@ui-kitten/components";
 
-interface IFormTextInput {
+export interface IFormTextInput {
   name: string;
   label: string;
   control: any;
@@ -14,13 +14,13 @@ interface IFormTextInput {
   required?: boolean;
   pattern?: RegExp;
 
-  [otherProps: string]: any
+  [otherProps: string]: any;
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 8
-  }
+    marginVertical: 8,
+  },
 });
 
 export default function FormTextInput({
@@ -39,7 +39,7 @@ export default function FormTextInput({
     <Controller
       control={control}
       rules={{
-        required
+        required,
       }}
       name={name}
       defaultValue={defaultValue}
@@ -47,12 +47,12 @@ export default function FormTextInput({
         const onChangeText = (text: string) => {
           if (pattern && !pattern.test(text)) {
             if (!value) {
-              onChange('');
+              onChange("");
             }
             return;
           }
 
-          onChange(text)
+          onChange(text);
         };
 
         return (
@@ -62,12 +62,12 @@ export default function FormTextInput({
               onChangeText={onChangeText}
               value={value}
               keyboardType={type}
-              status={error ? 'danger' : 'basic'}
+              status={error ? "danger" : "basic"}
               caption={error?.message || caption}
               {...otherProps}
             />
           </Layout>
-        )
+        );
       }}
     />
   );

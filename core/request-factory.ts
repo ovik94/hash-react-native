@@ -38,7 +38,6 @@ export default class RequestFactory {
   protected onSuccess = <T>(
     response: AxiosResponse<IResponseData<T>>
   ): Promise<IResponseData<T>> => {
-    console.log(response, "response");
     const responseBody = response.data;
 
     const messages = responseBody.messages || [];
@@ -107,7 +106,6 @@ export default class RequestFactory {
       .request<T, AxiosResponse<IResponseData<T>>>(requestConfig)
       .then((response) => this.onSuccess<T>(response))
       .catch((err) => {
-        console.log(err, "err");
         return this.onError<T>(err.response);
       });
   }

@@ -1,32 +1,32 @@
-import React, { FC } from 'react';
-import { observer } from 'mobx-react-lite';
-import { StyleSheet } from 'react-native';
-import { Icon, Layout, Text } from '@ui-kitten/components';
-import ExpensesList from '../components/expenses-list/ExpensesList';
-import Colors from '../constants/Colors';
+import React, { FC } from "react";
+import { observer } from "mobx-react-lite";
+import { StyleSheet } from "react-native";
+import { Icon, Layout, Text } from "@ui-kitten/components";
+import { ExpensesList } from "../components";
+import Colors from "../constants/Colors";
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16
+    padding: 16,
   },
   header: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 16,
   },
   addIcon: {
     width: 32,
     height: 32,
     tintColor: Colors.light.tint,
-    marginHorizontal: 8
-  }
+    marginHorizontal: 8,
+  },
 });
 
-const ExpensesListScreen: FC<{ navigation: any; }> = ({ navigation }: any) => {
+const ExpensesListScreen: FC<{ navigation: any }> = ({ navigation }: any) => {
   const onOpenAddExpense = () => {
-    navigation.navigate('AddExpense', { type: 'expensesList' });
+    navigation.navigate("AddExpense", { type: "expensesList" });
   };
 
   return (

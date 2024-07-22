@@ -9,7 +9,8 @@ import HeaderRight from "../screens/daily-report-screen/HeaderRight";
 import { RootTabParamList, RootTabScreenProps } from "../types";
 import Colors from "../constants/Colors";
 import useStores from "../hooks/useStores";
-import DailyReportFTScreen from "../screens/DailyReportFTScreen";
+import DailyReportFTScreen from "../screens/daily-report-ft-screen/DailyReportFTScreen";
+import HeaderRightFt from "../screens/daily-report-ft-screen/HeaderRightFt";
 
 const BottomTabNavigator = () => {
   const {
@@ -22,6 +23,7 @@ const BottomTabNavigator = () => {
     <BottomTab.Navigator
       screenOptions={{
         tabBarActiveTintColor: Colors.light.tint,
+        unmountOnBlur: true,
       }}
     >
       {checkPrivilege("APP_DAILY_REPORT", "admin") && (
@@ -77,7 +79,7 @@ const BottomTabNavigator = () => {
         <BottomTab.Screen
           name="DailyReportFT"
           component={DailyReportFTScreen}
-          options={() => ({
+          options={({ navigation }) => ({
             title: "Отчеты",
             tabBarIcon: (props) => (
               <Icon
@@ -86,6 +88,7 @@ const BottomTabNavigator = () => {
                 fill={props.color}
               />
             ),
+            headerRight: () => <HeaderRightFt navigation={navigation} />,
           })}
         />
       )}

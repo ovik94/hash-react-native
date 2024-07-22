@@ -5,6 +5,7 @@ import CounterpartiesStore from "./CounterpartiesStore";
 import DailyReportsStore from "./DailyReportsStore";
 import ExpensesStore from "./ExpensesStore";
 import UserStore from "./UserStore";
+import DailyReportsFTStore from "./DailyReportsFTStore";
 
 export interface IStoreParams {
   createRequest: RequestFactory["createRequest"];
@@ -17,6 +18,8 @@ export class RootStore {
 
   dailyReportStore: DailyReportsStore;
 
+  dailyReportFTStore: DailyReportsFTStore;
+
   expensesStore: ExpensesStore;
 
   counterpartiesStore: CounterpartiesStore;
@@ -25,6 +28,7 @@ export class RootStore {
 
   constructor() {
     this.dailyReportStore = new DailyReportsStore(this);
+    this.dailyReportFTStore = new DailyReportsFTStore(this);
     this.expensesStore = new ExpensesStore(this);
     this.counterpartiesStore = new CounterpartiesStore(this);
     this.userStore = new UserStore(this);

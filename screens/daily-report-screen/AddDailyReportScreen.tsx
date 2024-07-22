@@ -16,10 +16,9 @@ import { CoreContext } from "../../core/CoreContext";
 import useStores from "../../hooks/useStores";
 import { IDailyReport } from "../../stores/DailyReportsStore";
 import ExpensesStep from "./ExpensesStep";
-import InfoStep from "./InfoStep";
 import ReceiptsStep from "./ReceiptsStep";
 
-const StepScreens = [InfoStep, ReceiptsStep, ExpensesStep];
+const StepScreens = [ReceiptsStep, ExpensesStep];
 
 export interface IStepProps {
   onNext: () => void;
@@ -105,7 +104,6 @@ const AddDailyReportScreen = ({ navigation, route }: any) => {
         {StepScreens.map((screen, index) => {
           const StepComponent = screen;
           return (
-            // eslint-disable-next-line react/no-array-index-key
             <Layout
               style={{ ...styles.stepContainer, height: modalHeight + 155 }}
               key={index}

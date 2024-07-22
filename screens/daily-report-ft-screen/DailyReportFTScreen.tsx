@@ -4,17 +4,14 @@ import { StyleSheet } from "react-native";
 import ActionSheet from "react-native-actions-sheet";
 import { startOfMonth, lastDayOfMonth } from "date-fns";
 import { Icon, Layout, Spinner, Text } from "@ui-kitten/components";
-import {
-  ReportDetail,
-  SwipeListItem,
-  SwipeList,
-  ReloadButton,
-} from "../components";
+import { SwipeListItem, SwipeList, ReloadButton } from "../../components";
 
-import formatAmountString from "../components/utils/formatAmountString";
-import useStores from "../hooks/useStores";
-import { IDailyReport } from "../stores/DailyReportsStore";
-import dateFormatter from "../components/utils/dateFormatter";
+import formatAmountString from "../../components/utils/formatAmountString";
+import useStores from "../../hooks/useStores";
+import { IDailyReport } from "../../stores/DailyReportsStore";
+import dateFormatter from "../../components/utils/dateFormatter";
+import { IDailyReportFT } from "../../stores/DailyReportsFTStore";
+import ReportDetailFt from "../../components/report-detail-ft/ReportDetailFt";
 
 const styles = StyleSheet.create({
   container: {
@@ -34,17 +31,18 @@ const styles = StyleSheet.create({
   },
   sheet: {
     padding: 16,
+    height: 300,
   },
 });
 
 const DailyReportFTScreen = ({ navigation }: any) => {
   const {
-    dailyReportStore: { fetchReports, screenMessage },
+    dailyReportFTStore: { fetchReports, reports },
   } = useStores();
   const [loading, setLoading] = useState(false);
-  const [showReportData, setShowReportData] = useState<IDailyReport>();
+  const [showReportData, setShowReportData] = useState<IDailyReportFT>();
   const [refreshing, setRefreshing] = useState(false);
-  const [reportsData, setReportsData] = useState<Array<IDailyReport>>([]);
+
   const actionSheetRef = createRef<ActionSheet>();
 
   const [reportsParams, setReportsParams] = useState<{
@@ -63,7 +61,6 @@ const DailyReportFTScreen = ({ navigation }: any) => {
     if (reportsParams) {
       setLoading(true);
       fetchReports(reportsParams).then((res) => {
-        setReportsData(res);
         setLoading(false);
       });
     }
@@ -81,7 +78,6 @@ const DailyReportFTScreen = ({ navigation }: any) => {
   const onRefresh = () => {
     setRefreshing(true);
     fetchReports(reportsParams).then((res) => {
-      setReportsData(res);
       setRefreshing(false);
     });
   };
@@ -89,7 +85,6 @@ const DailyReportFTScreen = ({ navigation }: any) => {
   const onReload = useCallback(() => {
     setLoading(true);
     fetchReports(reportsParams).then((res) => {
-      setReportsData(res);
       setLoading(false);
     });
   }, [reportsParams]);
@@ -99,15 +94,15 @@ const DailyReportFTScreen = ({ navigation }: any) => {
 
   const onRightAction = (id: string) => {
     actionSheetRef.current?.setModalVisible(true);
-    const report = reportsData?.find((item) => item.id === id);
+    const report = reports?.find((item) => item.id === id);
 
     setShowReportData(report);
   };
 
   const onLeftAction = (id: string) => {
-    navigation.navigate("AddDailyReport", {
-      report: reportsData?.find((item) => item.id === id),
-      type: "update",
+    navigation.navigate("AddDailyReportFT", {
+      report: reports?.find((item) => item.id === id),
+      actionType: "update",
     });
   };
 
@@ -121,7 +116,7 @@ const DailyReportFTScreen = ({ navigation }: any) => {
       {!loading && (
         <>
           <SwipeList
-            data={reportsData}
+            data={reports}
             renderItem={renderItem}
             refreshing={refreshing}
             onRefresh={onRefresh}
@@ -131,15 +126,9 @@ const DailyReportFTScreen = ({ navigation }: any) => {
             onRightAction={onRightAction}
             onLeftAction={onLeftAction}
           />
-          {reportsData?.length === 0 && (
+          {reports?.length === 0 && (
             <Layout>
               <Text status="info">Отчетов пока нет</Text>
-              <ReloadButton onReload={onReload} />
-            </Layout>
-          )}
-          {!!screenMessage && (
-            <Layout>
-              <Text status="danger">{screenMessage}</Text>
               <ReloadButton onReload={onReload} />
             </Layout>
           )}
@@ -150,8 +139,9 @@ const DailyReportFTScreen = ({ navigation }: any) => {
         containerStyle={styles.sheet}
         animated
         gestureEnabled
+        defaultOverlayOpacity={0.6}
       >
-        <ReportDetail data={showReportData} />
+        <ReportDetailFt data={showReportData} />
       </ActionSheet>
     </Layout>
   );

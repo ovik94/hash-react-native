@@ -1,8 +1,17 @@
-import React from 'react';
-import { Controller, FieldError } from 'react-hook-form';
-import { StyleSheet } from 'react-native';
-import { Datepicker, Icon, IconProps, Layout, NativeDateService } from '@ui-kitten/components';
-import { I18nDayNames, I18nMonthNames } from '@ui-kitten/components/ui/calendar/i18n/type';
+import React from "react";
+import { Controller, FieldError } from "react-hook-form";
+import { StyleSheet } from "react-native";
+import {
+  Datepicker,
+  Icon,
+  IconProps,
+  Layout,
+  NativeDateService,
+} from "@ui-kitten/components";
+import {
+  I18nDayNames,
+  I18nMonthNames,
+} from "@ui-kitten/components/ui/calendar/i18n/type";
 
 interface IFormDatePicker {
   name: string;
@@ -11,41 +20,61 @@ interface IFormDatePicker {
   defaultValue?: string | Date;
   caption?: string;
   error?: FieldError;
+  disabled?: boolean;
   required?: boolean;
 }
 
 const i18n: { dayNames: I18nDayNames; monthNames: I18nMonthNames } = {
   dayNames: {
-    short: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
-    long: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']
+    short: ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"],
+    long: [
+      "Воскресенье",
+      "Понедельник",
+      "Вторник",
+      "Среда",
+      "Четверг",
+      "Пятница",
+      "Суббота",
+    ],
   },
   monthNames: {
-    short: ['Янв', 'Фев', 'Март', 'Апр', 'Май', 'Июнь', 'Июль', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+    short: [
+      "Янв",
+      "Фев",
+      "Март",
+      "Апр",
+      "Май",
+      "Июнь",
+      "Июль",
+      "Авг",
+      "Сен",
+      "Окт",
+      "Ноя",
+      "Дек",
+    ],
     long: [
-      'Январь',
-      'Февраль',
-      'Март',
-      'Апрель',
-      'Май',
-      'Июнь',
-      'Июль',
-      'Август',
-      'Сентябрь',
-      'Октябрь',
-      'Ноябрь',
-      'Декабрь'
-    ]
-  }
+      "Январь",
+      "Февраль",
+      "Март",
+      "Апрель",
+      "Май",
+      "Июнь",
+      "Июль",
+      "Август",
+      "Сентябрь",
+      "Октябрь",
+      "Ноябрь",
+      "Декабрь",
+    ],
+  },
 };
 
-const CalendarIcon = (props: IconProps) => (
-  <Icon {...props} name="calendar" />
-);
+const CalendarIcon = (props: IconProps) => <Icon {...props} name="calendar" />;
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 16
-  }
+    marginVertical: 16,
+  },
 });
 
 export default function FormDatePicker({
@@ -55,15 +84,20 @@ export default function FormDatePicker({
   error,
   caption,
   required,
-  defaultValue = new Date()
+  disabled,
+  defaultValue = new Date(),
 }: IFormDatePicker) {
-  const formatDateService = new NativeDateService('ru', { format: 'DD.MM.YYYY', startDayOfWeek: 1, i18n });
+  const formatDateService = new NativeDateService("ru", {
+    format: "DD.MM.YYYY",
+    startDayOfWeek: 1,
+    i18n,
+  });
 
   return (
     <Controller
       control={control}
       rules={{
-        required
+        required,
       }}
       defaultValue={defaultValue}
       name={name}
@@ -78,13 +112,14 @@ export default function FormDatePicker({
           <Layout style={styles.container}>
             <Datepicker
               label={label}
-              status={error ? 'danger' : 'basic'}
+              status={error ? "danger" : "basic"}
               caption={error?.message || caption}
               placeholder="дд.мм.гггг"
               date={value}
               onSelect={onChangeDate}
               accessoryRight={CalendarIcon}
               dateService={formatDateService}
+              disabled={disabled}
             />
           </Layout>
         );

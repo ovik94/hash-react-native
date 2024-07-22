@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { StyleSheet } from "react-native";
 import { Divider, Layout, Text } from "@ui-kitten/components";
 import { IDailyReport } from "../../stores/DailyReportsStore";
-import { formatAmountString } from "../utils/formatAmountString";
+import formatAmountString from "../utils/formatAmountString";
 
 interface IReportDetail {
   data?: IDailyReport;

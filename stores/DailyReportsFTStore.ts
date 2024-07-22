@@ -1,29 +1,24 @@
 import { makeAutoObservable } from "mobx";
 import { IExpense } from "./ExpensesStore";
 import { RootStore } from "./RootStore";
+import { Alert } from "react-native";
 
-export interface IDailyReport {
-  id: string;
+export interface IDailyReportFT {
+  id?: string;
+  adminName?: string;
   date: string;
-  adminName: string;
-  ipCash: string;
-  ipAcquiring: string;
-  oooCash: string;
-  oooAcquiring: string;
-  yandex: string;
-  expenses?: Array<IExpense> | null;
+  cash: string;
+  acquiring: string;
   totalSum: string;
-  totalCash: string;
+  comment: string;
 }
 
 export default class DailyReportsStore {
-  public reports: Array<IDailyReport> | null = null;
+  public reports: Array<Required<IDailyReportFT>> | null = null;
 
   public screenMessage = "";
 
   public sheetMessage = "";
-
-  public isLoadingSheet = false;
 
   protected rootStore: RootStore;
 
@@ -32,16 +27,8 @@ export default class DailyReportsStore {
     makeAutoObservable(this);
   }
 
-  private setLoadingSheet = (value: boolean) => {
-    this.isLoadingSheet = value;
-  };
-
-  private setReports = (reports: Array<IDailyReport>) => {
+  private setReports = (reports: Array<Required<IDailyReportFT>>) => {
     this.reports = reports;
-  };
-
-  private setScreenMessage = (message: string) => {
-    this.screenMessage = message;
   };
 
   private setSheetMessage = (message: string) => {
@@ -51,61 +38,56 @@ export default class DailyReportsStore {
   public fetchReports = (params?: {
     from?: string;
     to?: string;
-  }): Promise<Array<IDailyReport>> =>
+  }): Promise<Array<IDailyReportFT>> =>
     this.rootStore
-      .createRequest<Array<IDailyReport>>("fetchReports", undefined, params)
+      .createRequest<Array<Required<IDailyReportFT>>>(
+        "fetchReportsFt",
+        undefined,
+        params
+      )
       .then(({ status, data }) => {
-        let result: Array<IDailyReport> = [];
         if (status === "OK" && data) {
-          result = data.reverse();
+          this.setReports(data.reverse());
+          return data.reverse();
         }
-        if (!params) {
-          this.setReports(result);
-        }
-        this.setScreenMessage("");
-        return result;
+        return [];
       })
-      .catch(() => {
-        this.setScreenMessage("Произошла ошибка при загрузке отчетов");
+      .catch((e) => {
+        Alert.alert("Ошибка при запросе отчетов", e, [{ text: "OK" }]);
+
         return [];
       });
 
-  public addReport = async (reportData: IDailyReport) => {
-    this.setLoadingSheet(true);
-    return this.rootStore
-      .createRequest("addReport", reportData)
+  public addReport = async (reportData: IDailyReportFT) =>
+    this.rootStore
+      .createRequest("addReportFt", reportData)
       .then(({ status, data }) => {
         if (status === "OK") {
           this.setReports([data].concat(this.reports || []));
-          this.setSheetMessage("");
+          Alert.alert("Отчет успешно добавлен", "", [{ text: "OK" }]);
         } else {
-          this.setSheetMessage("Что-то пошло не так. Отчет не добавился");
+          Alert.alert("Ошибка при добавлении отчета", "", [{ text: "OK" }]);
         }
       })
-      .catch(() => {
-        this.setSheetMessage("Что-то пошло не так. Отчет не добавился");
-      })
-      .finally(() => this.setLoadingSheet(false));
-  };
+      .catch((e) => {
+        Alert.alert("Ошибка при добавлении отчета", e, [{ text: "OK" }]);
+      });
 
-  public updateReport = (updateData: IDailyReport) => {
-    this.setLoadingSheet(true);
-    return this.rootStore
-      .createRequest("updateReport", updateData)
+  public updateReport = async (updateData: IDailyReportFT) =>
+    this.rootStore
+      .createRequest("updateReportFt", updateData)
       .then(({ status, data }) => {
         if (status === "OK") {
           const newReports = (this.reports || []).map((report) =>
             report.id === data.id ? { ...report, ...data } : report
           );
           this.setReports(newReports);
-          this.setSheetMessage("");
+          Alert.alert("Отчет успешно обновлен", "", [{ text: "OK" }]);
         } else {
-          this.setSheetMessage("Что-то пошло не так. Отчет не обновился");
+          Alert.alert("Ошибка при обновлении отчета", "", [{ text: "OK" }]);
         }
       })
       .catch(() => {
-        this.setSheetMessage("Что-то пошло не так. Отчет не обновился");
-      })
-      .finally(() => this.setLoadingSheet(false));
-  };
+        Alert.alert("Ошибка при обновлении отчета", "", [{ text: "OK" }]);
+      });
 }

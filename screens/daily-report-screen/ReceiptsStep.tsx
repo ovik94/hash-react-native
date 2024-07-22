@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { ViewStyle, StyleProp } from "react-native";
+import { ViewStyle, StyleProp, View } from "react-native";
 import { Button, Layout, Text } from "@ui-kitten/components";
-import FormTextInput from "../../components/form-controls/FormTextInput";
 import formatAmountString from "../../components/utils/formatAmountString";
 import Styles from "../../constants/Styles";
 import { IStepProps } from "./AddDailyReportScreen";
+import { FormDatePicker, FormTextInput } from "../../components";
+import useStores from "../../hooks/useStores";
 
 type FormData = {
+  adminName: string;
+  date: string | Date;
   ipCash: string;
   ipAcquiring: string;
   oooCash: string;
@@ -23,12 +26,18 @@ export default function ReceiptsStep({
   setData,
 }: IStepProps) {
   const {
+    userStore: { user },
+  } = useStores();
+
+  const {
     control,
     handleSubmit,
     formState: { errors },
     setValue,
   } = useForm<FormData>({
     defaultValues: {
+      adminName: data.adminName || user.name,
+      date: data?.date || new Date(),
       ipCash: data?.ipCash || undefined,
       ipAcquiring: data?.ipAcquiring || undefined,
       oooCash: data?.oooCash || undefined,
@@ -50,6 +59,7 @@ export default function ReceiptsStep({
     setData(newData);
   };
 
+  const adminName = useWatch({ control, name: "adminName" });
   const ipCashValue = useWatch({ control, name: "ipCash" });
   const ipAcquiringValue = useWatch({ control, name: "ipAcquiring" });
   const oooCashValue = useWatch({ control, name: "oooCash" });
@@ -81,7 +91,29 @@ export default function ReceiptsStep({
           style={{
             flexDirection: "row",
             justifyContent: "space-between",
-            marginTop: 32,
+            alignItems: "center",
+            marginTop: 8,
+          }}
+        >
+          <View style={{ width: "50%", paddingRight: 8 }}>
+            <Text
+              style={{ fontWeight: "bold" }}
+            >{`Администратор: ${user.name}`}</Text>
+          </View>
+          <View style={{ width: "50%", paddingLeft: 8 }}>
+            <FormDatePicker
+              name="date"
+              label="Дата"
+              control={control}
+              error={errors.date}
+            />
+          </View>
+        </Layout>
+        <Layout
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            marginTop: 8,
           }}
         >
           <Layout style={{ width: "50%", paddingRight: 8 }}>
@@ -130,7 +162,7 @@ export default function ReceiptsStep({
           </Layout>
         </Layout>
 
-        <Layout style={{ width: "50%", marginTop: 16 }}>
+        <Layout style={{ marginTop: 16 }}>
           <Text style={{ fontWeight: "bold" }}>Яндекс.Еда и Деливери</Text>
           <FormTextInput
             name="yandex"
@@ -154,15 +186,8 @@ export default function ReceiptsStep({
 
       <Layout style={Styles.stepButtons as StyleProp<ViewStyle>}>
         <Button
-          onPress={onPrevious}
-          appearance="outline"
-          style={{ width: "45%" } as StyleProp<ViewStyle>}
-        >
-          Назад
-        </Button>
-        <Button
           onPress={handleSubmit(onSubmit)}
-          style={{ width: "45%" } as StyleProp<ViewStyle>}
+          style={{ width: "100%" } as StyleProp<ViewStyle>}
         >
           Далее
         </Button>

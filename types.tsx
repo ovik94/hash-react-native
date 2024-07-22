@@ -19,6 +19,7 @@ export type RootStackParamList = {
   Login: undefined;
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
   AddDailyReport: undefined;
+  AddDailyReportFT: undefined;
   ExpensesList: undefined;
   AddExpense: undefined;
   NotFound: undefined;

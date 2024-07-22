@@ -12,6 +12,7 @@ export enum PrivilegeType {
   APP_DAILY_REPORT = "APP_DAILY_REPORT",
   APP_CONTRACTORS = "APP_CONTRACTORS",
   APP_REVENUE = "APP_REVENUE",
+  APP_ADD_DAILY_REPORT = "APP_ADD_DAILY_REPORT",
 }
 
 type Role = "admin" | "waiter" | "supervisor" | "teller";

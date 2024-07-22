@@ -14,7 +14,7 @@ import useStores from "../../hooks/useStores";
 import { IExpense } from "../../stores/ExpensesStore";
 import SwipeListItem from "../swipe-list-item/SwipeListItem";
 import SwipeList from "../swipe-list/SwipeList";
-import { formatAmountString } from "../utils/formatAmountString";
+import formatAmountString from "../utils/formatAmountString";
 
 const styles = StyleSheet.create({
   container: {

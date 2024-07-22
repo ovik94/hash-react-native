@@ -12,6 +12,7 @@ import LoginScreen from "../screens/LoginScreen";
 import { RootStackParamList } from "../types";
 import useStores from "../hooks/useStores";
 import BottomTabNavigator from "../navigation/BottomTabNavigator";
+import AddDailyReportFTScreen from "../screens/daily-report-ft-screen/AddDailyReportFTScreen";
 
 const Root = () => {
   const {
@@ -43,6 +44,11 @@ const Root = () => {
             <Stack.Screen
               name="AddDailyReport"
               component={AddDailyReportScreen}
+              options={{ title: "Добавление нового отчета" }}
+            />
+            <Stack.Screen
+              name="AddDailyReportFT"
+              component={AddDailyReportFTScreen}
               options={{ title: "Добавление нового отчета" }}
             />
             <Stack.Screen

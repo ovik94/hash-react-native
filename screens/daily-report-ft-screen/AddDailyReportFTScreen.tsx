@@ -50,7 +50,7 @@ const AddDailyReportFTScreen = ({ navigation, route }: any) => {
   );
 
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       if (isUpdate) {
         navigation.setOptions({ title: "Обновление отчета" });
       }

@@ -7,6 +7,7 @@ import Styles from "../../constants/Styles";
 import { IStepProps } from "./AddDailyReportScreen";
 import { FormDatePicker, FormTextInput } from "../../components";
 import useStores from "../../hooks/useStores";
+import moment from "moment";
 
 type FormData = {
   adminName: string;
@@ -19,12 +20,13 @@ type FormData = {
   yandex: string;
 };
 
-export default function ReceiptsStep({
-  onNext,
-  onPrevious,
-  data,
-  setData,
-}: IStepProps) {
+const dateTransform = (date: string) => {
+  const [day, month, year] = date.split(".");
+
+  return `${month}/${day}/${year}`;
+};
+
+export default function ReceiptsStep({ onNext, data, setData }: IStepProps) {
   const {
     userStore: { user },
   } = useStores();
@@ -37,7 +39,10 @@ export default function ReceiptsStep({
   } = useForm<FormData>({
     defaultValues: {
       adminName: data.adminName || user.name,
-      date: data?.date || new Date(),
+      date:
+        data?.date && typeof data?.date === "string"
+          ? new Date(moment(dateTransform(data?.date)).format())
+          : new Date(),
       ipCash: data?.ipCash || undefined,
       ipAcquiring: data?.ipAcquiring || undefined,
       oooCash: data?.oooCash || undefined,

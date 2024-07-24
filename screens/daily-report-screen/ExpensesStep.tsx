@@ -45,7 +45,11 @@ const ExpensesStep = ({
     });
 
     const totalCash = Number(data.ipCash) + Number(data.oooCash) - expensesSum;
-    const resultData = { ...data, expenses, totalCash: String(totalCash) };
+    const resultData = {
+      ...data,
+      expenses: expenses || [],
+      totalCash: String(totalCash),
+    };
 
     onComplete(resultData);
   };

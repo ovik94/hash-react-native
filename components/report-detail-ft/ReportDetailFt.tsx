@@ -66,7 +66,7 @@ const ReportDetailFt: FC<IReportDetailFt> = ({ data }) => {
       {data?.comment && (
         <Layout>
           <Layout style={styles.header}>
-            {renderItem("Комментарий", formatAmountString(data?.comment))}
+            {renderItem("Комментарий", data?.comment)}
           </Layout>
         </Layout>
       )}

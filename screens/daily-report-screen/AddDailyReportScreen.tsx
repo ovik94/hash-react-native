@@ -17,6 +17,7 @@ import useStores from "../../hooks/useStores";
 import { IDailyReport } from "../../stores/DailyReportsStore";
 import ExpensesStep from "./ExpensesStep";
 import ReceiptsStep from "./ReceiptsStep";
+import dateFormatter from "../../components/utils/dateFormatter";
 
 const StepScreens = [ReceiptsStep, ExpensesStep];
 
@@ -87,10 +88,15 @@ const AddDailyReportScreen = ({ navigation, route }: any) => {
     actionSheetRef.current?.setModalVisible(true);
     setNewData(result);
 
+    const body = {
+      ...result,
+      date: dateFormatter(result.date),
+    };
+
     if (type === "add") {
-      addReport(result);
+      addReport(body);
     } else {
-      updateReport(result);
+      updateReport(body);
     }
   };
 

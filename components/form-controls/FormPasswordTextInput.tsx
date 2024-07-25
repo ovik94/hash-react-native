@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Controller } from "react-hook-form";
-import { ImageProps, StyleSheet, TouchableWithoutFeedback } from "react-native";
+import { ImageProps, StyleSheet } from "react-native";
 import { Input, Layout, Icon } from "@ui-kitten/components";
 import { IFormTextInput } from "./FormTextInput";
 
@@ -37,9 +37,11 @@ export default function FormPasswordTextInput({
         };
 
         const renderIcon = (props?: Partial<ImageProps>) => (
-          <TouchableWithoutFeedback onPress={toggleSecureEntry}>
-            <Icon {...props} name={secureTextEntry ? "eye-off" : "eye"} />
-          </TouchableWithoutFeedback>
+          <Icon
+            {...props}
+            onPress={toggleSecureEntry}
+            name={secureTextEntry ? "eye-off" : "eye"}
+          />
         );
 
         const onChangeText = (text: string) => {

@@ -1,7 +1,6 @@
 import React, { FC, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { StyleSheet } from "react-native";
-import moment from "moment";
 import { Layout, Text } from "@ui-kitten/components";
 import { useForm, useWatch } from "react-hook-form";
 
@@ -27,8 +26,7 @@ const styles = StyleSheet.create({
 
 const dateTransform = (date: string) => {
   const [day, month, year] = date.split(".");
-
-  return `${month}/${day}/${year}`;
+  return `${year}-${month}-${day}`;
 };
 
 export type AddDailyReportFtFormData = {
@@ -58,13 +56,10 @@ const AddReportFtForm: FC<IAddReportFtForm> = ({
     handleSubmit,
     formState: { errors },
     setValue,
-    reset,
   } = useForm<AddDailyReportFtFormData>({
     defaultValues: {
       id: report?.id || undefined,
-      date: report?.date
-        ? new Date(moment(dateTransform(report?.date)).format())
-        : new Date(),
+      date: report?.date ? new Date(dateTransform(report?.date)) : new Date(),
       cash: report?.cash,
       acquiring: report?.acquiring,
       totalSum: report?.totalSum,

@@ -33,14 +33,14 @@ const Root = () => {
           <Stack.Screen
             name="Root"
             component={BottomTabNavigator}
-            options={{ headerShown: false }}
+            options={{ headerShown: false, headerTitle: "Главная" }}
           />
           <Stack.Screen
             name="NotFound"
             component={NotFoundScreen}
             options={{ title: "Что-то пошло не так" }}
           />
-          <Stack.Group screenOptions={{ presentation: "modal" }}>
+          <Stack.Group>
             <Stack.Screen
               name="AddDailyReport"
               component={AddDailyReportScreen}

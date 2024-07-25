@@ -43,6 +43,7 @@ const AddDailyReportFTScreen = ({ navigation, route }: any) => {
 
       (isUpdate ? updateReport(body) : addReport(body)).then(() => {
         setLoading(false);
+
         navigation.navigate("DailyReportFT");
       });
     },

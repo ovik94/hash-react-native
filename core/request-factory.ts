@@ -94,8 +94,8 @@ export default class RequestFactory {
     }
 
     const requestConfig: AxiosRequestConfig = {
-      // url: `http://185.20.226.121:8082${path}`,
-      url: `http://localhost:8082${path}`,
+      url: `http://185.20.226.121:8082${path}`,
+      // url: `http://localhost:8082${path}`,
       method,
       headers,
       data: body,

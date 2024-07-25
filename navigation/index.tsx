@@ -48,7 +48,7 @@ function RootNavigator() {
 
 export default function Navigation() {
   return (
-    <NavigationContainer linking={LinkingConfiguration} theme={MyTheme}>
+    <NavigationContainer theme={MyTheme}>
       <RootNavigator />
     </NavigationContainer>
   );

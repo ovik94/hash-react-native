@@ -16,9 +16,7 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.ovik.hashreactnative"
@@ -37,6 +35,9 @@
       "eas": {
         "projectId": "0f6bf117-e2ee-4b15-8901-b8702d2926de"
       }
-    }
+    },
+    "plugins": [
+      ["expo-build-properties", { "android": { "usesCleartextTraffic": true } }]
+    ]
   }
 }

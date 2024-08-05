@@ -25,6 +25,7 @@ export const ExpenseCategories: Array<ICategory> = [
   { title: "Хоз. нужда", icon: "cube" },
   { title: "Курьер", icon: "car" },
   { title: "Такси", icon: "car" },
+  { title: "Премия персонала за обслуживание", icon: "percent-outline" },
   { title: "Прочие расходы", icon: "more-horizontal" },
 ];
 

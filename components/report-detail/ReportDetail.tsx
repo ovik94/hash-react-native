@@ -62,6 +62,14 @@ const ReportDetail: FC<IReportDetail> = ({ data }) => {
         <Layout style={styles.header}>
           {renderItem("Наличные", formatAmountString(data?.ipCash))}
           {renderItem("Эквайринг", formatAmountString(data?.ipAcquiring))}
+          {renderItem("Нетмонет", formatAmountString(data?.ipNetmonet))}
+        </Layout>
+        <Layout style={styles.header}>
+          {renderItem("Онлайн", formatAmountString(data?.ipOnline))}
+          {renderItem(
+            "Яндекс.Еда и Деливери",
+            formatAmountString(data?.yandex)
+          )}
         </Layout>
       </Layout>
       <Divider style={styles.divider} />
@@ -71,14 +79,7 @@ const ReportDetail: FC<IReportDetail> = ({ data }) => {
         <Layout style={styles.header}>
           {renderItem("Наличные", formatAmountString(data?.oooCash))}
           {renderItem("Эквайринг", formatAmountString(data?.oooAcquiring))}
-        </Layout>
-      </Layout>
-      <Divider style={styles.divider} />
-
-      <Layout>
-        <Text category="label">Яндекс.Еда и Деливери</Text>
-        <Layout style={styles.header}>
-          {renderItem("Выручка", formatAmountString(data?.yandex))}
+          {renderItem("Нетмонет", formatAmountString(data?.oooNetmonet))}
         </Layout>
       </Layout>
       <Divider style={styles.divider} />
@@ -96,7 +97,8 @@ const ReportDetail: FC<IReportDetail> = ({ data }) => {
         <Text category="label" style={{ marginBottom: 16 }}>
           Расходные операции
         </Text>
-        {data?.expenses?.length &&
+        {data.expenses &&
+          data.expenses.length > 1 &&
           data.expenses.map((item) => (
             <Layout key={item.id} style={{ width: "100%", marginBottom: 8 }}>
               <Layout

@@ -9,8 +9,11 @@ export interface IDailyReport {
   adminName: string;
   ipCash: string;
   ipAcquiring: string;
+  ipNetmonet: string;
+  ipOnline: string;
   oooCash: string;
   oooAcquiring: string;
+  oooNetmonet: string;
   yandex: string;
   expenses?: Array<IExpense> | null;
   totalSum: string;

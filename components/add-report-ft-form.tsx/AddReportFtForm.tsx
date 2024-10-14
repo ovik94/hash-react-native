@@ -34,6 +34,7 @@ export type AddDailyReportFtFormData = {
   date: string | Date;
   cash: string;
   acquiring: string;
+  yandex: string;
   totalSum: string;
   comment: string;
 };
@@ -62,6 +63,7 @@ const AddReportFtForm: FC<IAddReportFtForm> = ({
       date: report?.date ? new Date(dateTransform(report?.date)) : new Date(),
       cash: report?.cash,
       acquiring: report?.acquiring,
+      yandex: report?.yandex,
       totalSum: report?.totalSum,
       comment: report?.comment,
     },
@@ -69,12 +71,16 @@ const AddReportFtForm: FC<IAddReportFtForm> = ({
 
   const cquiringValue = useWatch({ control, name: "acquiring" });
   const cashValue = useWatch({ control, name: "cash" });
+  const yandexValue = useWatch({ control, name: "yandex" });
   const totalSumValue = useWatch({ control, name: "totalSum" });
 
   useEffect(() => {
-    const totalSum = Number(cquiringValue || "0") + Number(cashValue || "0");
+    const totalSum =
+      Number(cquiringValue || "0") +
+      Number(cashValue || "0") +
+      Number(yandexValue || "0");
     setValue("totalSum", String(totalSum.toFixed(2)));
-  }, [cquiringValue, cashValue]);
+  }, [cquiringValue, cashValue, yandexValue]);
 
   return (
     <>
@@ -107,6 +113,20 @@ const AddReportFtForm: FC<IAddReportFtForm> = ({
               type="decimal-pad"
               pattern={/^\d*(\.\d{0,2})?$/}
               error={errors.acquiring}
+              disabled={loading}
+              required
+            />
+          </Layout>
+        </Layout>
+        <Layout style={styles.receipts}>
+          <Layout style={{ width: "100%" }}>
+            <FormTextInput
+              name="yandex"
+              label="Яндекс.Еда"
+              control={control}
+              type="decimal-pad"
+              pattern={/^\d*(\.\d{0,2})?$/}
+              error={errors.yandex}
               disabled={loading}
               required
             />

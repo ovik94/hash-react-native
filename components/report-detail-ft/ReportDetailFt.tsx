@@ -61,6 +61,7 @@ const ReportDetailFt: FC<IReportDetailFt> = ({ data }) => {
         <Layout style={styles.header}>
           {renderItem("Наличные", formatAmountString(data?.cash))}
           {renderItem("Эквайринг", formatAmountString(data?.acquiring))}
+          {renderItem("Яндекс.Едв", formatAmountString(data?.yandex))}
         </Layout>
       </Layout>
       {data?.comment && (

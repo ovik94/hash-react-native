@@ -9,6 +9,7 @@ export interface IDailyReportFT {
   date: string;
   cash: string;
   acquiring: string;
+  yandex: string;
   totalSum: string;
   comment: string;
 }
